@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function FloatingDiya() {
   return (
@@ -8,7 +9,7 @@ export default function FloatingDiya() {
       transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
       className="absolute bottom-10 right-10 opacity-60"
     >
-      <img src="/images/diya.png" alt="Diya" className="w-12 h-12" />
+      <Image src="/images/diya.png" alt="Diya" className="w-12 h-12" />
     </motion.div>
   );
 }

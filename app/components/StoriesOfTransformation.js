@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import Image from "next/image"; // ✅ Use Next.js Image for optimization
 
 const stories = [
     {
@@ -59,7 +60,7 @@ const stories = [
       after: "Arya Samaj spread true Vedic knowledge, promoting rational thinking & social reform.",
       image: "/images/superstition-removal.jpg",
     }
-  ];
+];
 
 export default function StoriesOfTransformation() {
   const [flipped, setFlipped] = useState(Array(stories.length).fill(false));
@@ -105,7 +106,7 @@ export default function StoriesOfTransformation() {
               >
                 <h3 className="text-xl font-bold font-merriweather text-orange-800">{story.name}</h3>
                 <p className="text-sm text-gray-600 mt-1">{story.title}</p>
-                <p className="mt-3 text-sm italic">"{story.before}"</p>
+                <p className="mt-3 text-sm italic">&ldquo;{story.before}&rdquo;</p>
                 <button className="mt-3 text-orange-600 font-bold">Tap to See Transformation</button>
               </motion.div>
 
@@ -115,14 +116,18 @@ export default function StoriesOfTransformation() {
                   flipped[index] ? "block" : "hidden"
                 }`}
               >
-                <img
-                  src={story.image}
-                  alt={story.name}
-                  className="w-full h-[160px] object-cover rounded-t-lg"
-                />
+                <div className="relative w-full h-[160px]">
+                  <Image
+                    src={story.image}
+                    alt={story.name}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-t-lg"
+                  />
+                </div>
                 <h3 className="text-xl font-bold font-merriweather mt-3">{story.name}</h3>
                 <p className="text-sm text-yellow-200 mt-1">{story.title}</p>
-                <p className="mt-3 text-sm italic">"{story.after}"</p>
+                <p className="mt-3 text-sm italic">&ldquo;{story.after}&rdquo;</p>
                 <button className="mt-3 text-yellow-300 font-bold" onClick={() => toggleFlip(index)}>
                   Tap to Flip Back
                 </button>

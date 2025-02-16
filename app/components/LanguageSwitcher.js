@@ -8,7 +8,7 @@ export default function LanguageSwitcher({ onLanguageChange }) {
     const savedLang = localStorage.getItem("language") || "en";
     setLanguage(savedLang);
     onLanguageChange(savedLang);
-  }, []);
+  }, [onLanguageChange]); // ✅ Now `onLanguageChange` is a dependency
 
   const changeLanguage = (lang) => {
     setLanguage(lang);

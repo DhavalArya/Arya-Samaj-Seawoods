@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FaVolumeUp, FaWhatsapp, FaXTwitter, FaInstagram, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { FaWhatsapp, FaXTwitter, FaInstagram, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 const quotes = [
   { 
@@ -64,109 +64,109 @@ const quotes = [
     // audio: "/audio/quote10.mp3"
   },
   {
-    "text": "ॐ स्वस्ति न इन्द्रो वृद्धश्रवाः। स्वस्ति नः पूषा विश्ववेदाः॥",
-    "meaning": "May Indra, the possessor of great wisdom, bless us. May the all-knowing Sun God grant us well-being.",
-    "source": "यजुर्वेद 25.19 (Swastivachan)"
+    text: "ॐ स्वस्ति न इन्द्रो वृद्धश्रवाः। स्वस्ति नः पूषा विश्ववेदाः॥",
+    meaning: "May Indra, the possessor of great wisdom, bless us. May the all-knowing Sun God grant us well-being.",
+    source: "यजुर्वेद 25.19 (Swastivachan)"
   },
   {
-    "text": "ॐ द्यौः शान्तिरन्तरिक्षँ शान्तिः। पृथिवी शान्तिरापः शान्तिः॥",
-    "meaning": "May there be peace in the heavens, peace in the atmosphere, peace on earth, and peace in the waters.",
-    "source": "यजुर्वेद 36.17 (Shantikaran)"
+    text: "ॐ द्यौः शान्तिरन्तरिक्षँ शान्तिः। पृथिवी शान्तिरापः शान्तिः॥",
+    meaning: "May there be peace in the heavens, peace in the atmosphere, peace on earth, and peace in the waters.",
+    source: "यजुर्वेद 36.17 (Shantikaran)"
   },
   {
-    "text": "ॐ तमसो मा ज्योतिर्गमय। मृत्योर्मा अमृतं गमय॥",
-    "meaning": "Lead me from darkness to light. Lead me from death to immortality.",
-    "source": "बृहदारण्यक उपनिषद् 1.3.28"
+    text: "ॐ तमसो मा ज्योतिर्गमय। मृत्योर्मा अमृतं गमय॥",
+    meaning: "Lead me from darkness to light. Lead me from death to immortality.",
+    source: "बृहदारण्यक उपनिषद् 1.3.28"
   },
   {
-    "text": "ॐ सत्यं वद। धर्मं चर।",
-    "meaning": "Speak the truth. Follow righteousness.",
-    "source": "तैत्तिरीय उपनिषद् 1.11.1"
+    text: "ॐ सत्यं वद। धर्मं चर।",
+    meaning: "Speak the truth. Follow righteousness.",
+    source: "तैत्तिरीय उपनिषद् 1.11.1"
   },
   {
-    "text": "ॐ मातृदेवो भव। पितृदेवो भव। आचार्यदेवो भव।",
-    "meaning": "Regard your mother, father, and teacher as God.",
-    "source": "तैत्तिरीय उपनिषद् 1.11.2"
+    text: "ॐ मातृदेवो भव। पितृदेवो भव। आचार्यदेवो भव।",
+    meaning: "Regard your mother, father, and teacher as God.",
+    source: "तैत्तिरीय उपनिषद् 1.11.2"
   },
   {
-    "text": "ॐ आ नो भद्राः क्रतवो यन्तु विश्वतः।",
-    "meaning": "May noble thoughts come to us from all directions.",
-    "source": "ऋग्वेद 1.89.1"
+    text: "ॐ आ नो भद्राः क्रतवो यन्तु विश्वतः।",
+    meaning: "May noble thoughts come to us from all directions.",
+    source: "ऋग्वेद 1.89.1"
   },
   {
-    "text": "ॐ अग्निमीळे पुरोहितं।",
-    "meaning": "I praise Agni, the first priest of the sacrifice.",
-    "source": "ऋग्वेद 1.1.1"
+    text: "ॐ अग्निमीळे पुरोहितं।",
+    meaning: "I praise Agni, the first priest of the sacrifice.",
+    source: "ऋग्वेद 1.1.1"
   },
   {
-    "text": "ॐ यज्ञायज्ञिनां पतये नमः।",
-    "meaning": "Salutations to the Lord of Sacrifice (Yajna).",
-    "source": "यजुर्वेद 3.1 (Ishwar Stuti)"
+    text: "ॐ यज्ञायज्ञिनां पतये नमः।",
+    meaning: "Salutations to the Lord of Sacrifice (Yajna).",
+    source: "यजुर्वेद 3.1 (Ishwar Stuti)"
   },
   {
-    "text": "ॐ यज्ञेन यज्ञमयजन्त देवाः।",
-    "meaning": "By Yajna, the gods performed Yajna.",
-    "source": "ऋग्वेद 10.90.16"
+    text: "ॐ यज्ञेन यज्ञमयजन्त देवाः।",
+    meaning: "By Yajna, the gods performed Yajna.",
+    source: "ऋग्वेद 10.90.16"
   },
   {
-    "text": "ॐ आत्मानं रथिनं विद्धि।",
-    "meaning": "Know the self as the charioteer.",
-    "source": "कठोपनिषद् 1.3.3"
+    text: "ॐ आत्मानं रथिनं विद्धि।",
+    meaning: "Know the self as the charioteer.",
+    source: "कठोपनिषद् 1.3.3"
   },
   {
-    "text": "ॐ ऋतं च सत्यं चाभीध्यानात् तपसा योनिमाप्नुवन्ति।",
-    "meaning": "Through meditation on truth and righteousness, one attains the supreme goal.",
-    "source": "मुण्डकोपनिषद् 3.1.5"
+    text: "ॐ ऋतं च सत्यं चाभीध्यानात् तपसा योनिमाप्नुवन्ति।",
+    meaning: "Through meditation on truth and righteousness, one attains the supreme goal.",
+    source: "मुण्डकोपनिषद् 3.1.5"
   },
   {
-    "text": "ॐ सत्येन धार्यते पृथ्वी।",
-    "meaning": "The Earth is upheld by truth.",
-    "source": "अथर्ववेद 12.1.1"
+    text: "ॐ सत्येन धार्यते पृथ्वी।",
+    meaning: "The Earth is upheld by truth.",
+    source: "अथर्ववेद 12.1.1"
   },
   {
-    "text": "ॐ प्रातरग्निं प्रातरिन्द्रं हवामहे। प्रातर्मित्रावरुणा प्रातरश्विना॥",
-    "meaning": "At dawn, we invoke Agni, Indra, Mitra, Varuna, and the Ashvins for blessings.",
-    "source": "ऋग्वेद 1.142.1 (Pratahkalin Mantra)"
+    text: "ॐ प्रातरग्निं प्रातरिन्द्रं हवामहे। प्रातर्मित्रावरुणा प्रातरश्विना॥",
+    meaning: "At dawn, we invoke Agni, Indra, Mitra, Varuna, and the Ashvins for blessings.",
+    source: "ऋग्वेद 1.142.1 (Pratahkalin Mantra)"
   },
   {
-    "text": "ॐ यज्ञाग्निं प्रातरिन्द्रं हवामहे।",
-    "meaning": "We invoke the sacred fire and Indra in the morning.",
-    "source": "ऋग्वेद 1.142.1"
+    text: "ॐ यज्ञाग्निं प्रातरिन्द्रं हवामहे।",
+    meaning: "We invoke the sacred fire and Indra in the morning.",
+    source: "ऋग्वेद 1.142.1"
   },
   {
-    "text": "ॐ क्रिण्वन्तो विश्वमार्यम्।",
-    "meaning": "Make the entire world noble (Arya).",
-    "source": "ऋग्वेद 9.63.5"
+    text: "ॐ क्रिण्वन्तो विश्वमार्यम्।",
+    meaning: "Make the entire world noble (Arya).",
+    source: "ऋग्वेद 9.63.5"
   },
   {
-    "text": "ॐ आत्मा वा इदमेक एवाग्र आसीत्।",
-    "meaning": "In the beginning, only the supreme self existed.",
-    "source": "बृहदारण्यक उपनिषद् 1.4.1"
+    text: "ॐ आत्मा वा इदमेक एवाग्र आसीत्।",
+    meaning: "In the beginning, only the supreme self existed.",
+    source: "बृहदारण्यक उपनिषद् 1.4.1"
   },
   {
-    "text": "ॐ सह नाववतु। सह नौ भुनक्तु। सह वीर्यं करवावहै॥",
-    "meaning": "May He protect us both (teacher and student). May we enjoy learning together. May we work with great energy.",
-    "source": "कठोपनिषद् 2.1.10"
+    text: "ॐ सह नाववतु। सह नौ भुनक्तु। सह वीर्यं करवावहै॥",
+    meaning: "May He protect us both (teacher and student). May we enjoy learning together. May we work with great energy.",
+    source: "कठोपनिषद् 2.1.10"
   },
   {
-    "text": "ॐ यज्ञायज्ञिनां पतये नमो नमः।",
-    "meaning": "Salutations again and again to the Lord of Sacrifice.",
-    "source": "यजुर्वेद 3.35"
+    text: "ॐ यज्ञायज्ञिनां पतये नमो नमः।",
+    meaning: "Salutations again and again to the Lord of Sacrifice.",
+    source: "यजुर्वेद 3.35"
   },
   {
-    "text": "ॐ अग्निर्मूर्धा दिवः ककुत्पतिः पृथिव्या अयम्।",
-    "meaning": "Agni is the supreme head of heaven and the king of the earth.",
-    "source": "ऋग्वेद 10.1.1"
+    text: "ॐ अग्निर्मूर्धा दिवः ककुत्पतिः पृथिव्या अयम्।",
+    meaning: "Agni is the supreme head of heaven and the king of the earth.",
+    source: "ऋग्वेद 10.1.1"
   },
   {
-    "text": "ॐ आत्मानं रथिनं विद्धि।",
-    "meaning": "Know the self as the charioteer.",
-    "source": "कठोपनिषद् 1.3.3"
+    text: "ॐ आत्मानं रथिनं विद्धि।",
+    meaning: "Know the self as the charioteer.",
+    source: "कठोपनिषद् 1.3.3"
   },
   {
-    "text": "ॐ ऋतं च सत्यं चाभीध्यानात् तपसा योनिमाप्नुवन्ति।",
-    "meaning": "Through meditation on truth and righteousness, one attains the supreme goal.",
-    "source": "मुण्डकोपनिषद् 3.1.5"
+    text: "ॐ ऋतं च सत्यं चाभीध्यानात् तपसा योनिमाप्नुवन्ति।",
+    meaning: "Through meditation on truth and righteousness, one attains the supreme goal.",
+    source: "मुण्डकोपनिषद् 3.1.5"
   }
 ];
 
@@ -213,7 +213,7 @@ export default function DailyWisdom() {
           📖 Daily Vedic Wisdom
         </h2>
         <p className="text-3xl font-sans text-gray-800 font-semibold mb-2">{quotes[currentQuoteIndex].text}</p>
-        <p className="text-lg text-gray-600 italic">"{quotes[currentQuoteIndex].meaning}"</p>
+        <p className="text-lg text-gray-600 italic">{`"${quotes[currentQuoteIndex].meaning}"`}</p>
         <p className="text-sm text-gray-500 mt-2">- {quotes[currentQuoteIndex].source}</p>
       </div>
 

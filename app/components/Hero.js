@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Hero() {
-  const [quotes, setQuotes] = useState([
+  const quotes = [
     "ॐ असतो मा सद्गमय। तमसो मा ज्योतिर्गमय। मृत्योर्मा अमृतं गमय॥",
     "The purpose of Arya Samaj is to make the world noble.",
     "Truth alone triumphs - सत्यमेव जयते",
-  ]);
+  ];
   const [currentQuote, setCurrentQuote] = useState(0);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function Hero() {
       setCurrentQuote((prev) => (prev + 1) % quotes.length);
     }, 5000);
     return () => clearInterval(quoteInterval);
-  }, []);
+  }, [quotes.length]); // ✅ Fix dependency warning
 
   return (
     <section className="relative w-full text-center pt-[140px] pb-16 bg-vedic-pattern text-white rounded-b-[80px] shadow-lg mt-[120px]">
@@ -41,7 +41,9 @@ export default function Hero() {
         <h1 className="text-5xl font-bold font-merriweather drop-shadow-lg">
           Welcome to Arya Samaj - Seawoods
         </h1>
-        <p className="mt-3 text-xl font-noto-serif text-[#5b2c06]">"सत्यं वद। धर्मं चर।"</p>
+        <p className="mt-3 text-xl font-noto-serif text-[#5b2c06]">
+          &quot;सत्यं वद। धर्मं चर।&quot;
+        </p>
 
         <motion.button
           whileHover={{ scale: 1.1 }}
@@ -52,14 +54,14 @@ export default function Hero() {
 
         {/* Rotating Quotes */}
         <AnimatePresence mode="wait">
-        <motion.p
+          <motion.p
             key={currentQuote}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 1 }}
             className="mt-6 text-xl font-medium italic text-[#a06a40]"
-            >
+          >
             {quotes[currentQuote]}
           </motion.p>
         </AnimatePresence>

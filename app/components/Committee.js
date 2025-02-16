@@ -21,14 +21,6 @@ export default function Committee() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Auto-scroll effect every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % totalMembers);
   };
@@ -37,6 +29,14 @@ export default function Committee() {
     setCurrentIndex((prev) => (prev - 1 + totalMembers) % totalMembers);
   };
 
+  // Auto-scroll effect every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [nextSlide]);
+  
   return (
     <motion.section
       ref={ref}

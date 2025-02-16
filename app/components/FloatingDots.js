@@ -6,13 +6,16 @@ export default function FloatingDots() {
   const mountRef = useRef(null);
 
   useEffect(() => {
+    if (!mountRef.current) return; // Ensure the ref exists before proceeding
+
+    const mount = mountRef.current; // Store ref value in a variable
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    mountRef.current.appendChild(renderer.domElement);
+    mount.appendChild(renderer.domElement); // Use stored ref variable
 
     // Create Floating Dots using Circle Geometry
     const particles = new THREE.Group();
@@ -47,9 +50,7 @@ export default function FloatingDots() {
     animate();
 
     return () => {
-      if (mountRef.current) {
-        mountRef.current.removeChild(renderer.domElement);
-      }
+      mount.removeChild(renderer.domElement); // Use stored ref variable in cleanup
     };
   }, []);
 
