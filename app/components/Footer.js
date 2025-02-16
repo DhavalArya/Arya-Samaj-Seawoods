@@ -1,8 +1,7 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
-export default function Footer() {
   // Did You Know? Facts
   const didYouKnowFacts = [
     "Over 75% of Indian freedom fighters were influenced by Arya Samaj principles.",
@@ -71,14 +70,18 @@ export default function Footer() {
     { riddle: "What has no beginning or end yet defines existence?", answer: "Time - Upanishads" }
   ];
 
-  // Randomly select a fact and riddle on each reload
+export default function Footer() {
+  // Memoize arrays to prevent unnecessary re-renders
+  const memoizedFacts = useMemo(() => didYouKnowFacts, []);
+  const memoizedRiddles = useMemo(() => vedicRiddles, []);
+
   const [didYouKnow, setDidYouKnow] = useState("");
   const [vedicRiddle, setVedicRiddle] = useState({ question: "", answer: "" });
 
   useEffect(() => {
-    setDidYouKnow(didYouKnowFacts[Math.floor(Math.random() * didYouKnowFacts.length)]);
-    setVedicRiddle(vedicRiddles[Math.floor(Math.random() * vedicRiddles.length)]);
-  }, []);
+    setDidYouKnow(memoizedFacts[Math.floor(Math.random() * memoizedFacts.length)]);
+    setVedicRiddle(memoizedRiddles[Math.floor(Math.random() * memoizedRiddles.length)]);
+  }, [memoizedFacts, memoizedRiddles]);
 
   return (
     <footer className="w-full bg-gradient-to-r from-yellow-600 to-orange-500 text-white py-10 shadow-lg rounded-t-[40px]">
@@ -95,10 +98,10 @@ export default function Footer() {
         {/* 📜 Did You Know & Vedic Riddle */}
         <div>
           <h2 className="text-xl font-bold font-merriweather mb-3">📜 Did You Know?</h2>
-          <p className="text-sm italic">"{didYouKnow}"</p>
+          <p className="text-sm italic">{"\"" + didYouKnow + "\""}</p>
 
           <h2 className="text-xl font-bold font-merriweather mt-4">🤔 Vedic Riddle</h2>
-          <p className="text-sm">{vedicRiddle.question}</p>
+          <p className="text-sm">{vedicRiddle.riddle}</p>
           <p className="text-sm font-semibold">Answer: {vedicRiddle.answer}</p>
         </div>
 
