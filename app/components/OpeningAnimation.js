@@ -1,6 +1,5 @@
 "use client"; // ✅ Ensures this runs only on the client side
 
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
@@ -18,11 +17,13 @@ export default function OpeningAnimation({ onComplete }) {
       .catch((error) => console.error("Failed to load animation:", error));
 
     // ✅ Auto-hide animation after 4 seconds
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setAnimationComplete(true);
       if (onComplete) onComplete();
     }, 4000);
-  }, []);
+
+    return () => clearTimeout(timeout); // ✅ Cleanup timeout on unmount
+  }, [onComplete]); // ✅ Fix: Include `onComplete` as a dependency
 
   if (animationComplete) return null; // ✅ Hide animation when done
 

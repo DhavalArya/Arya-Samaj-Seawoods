@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 export default function Header() {
-  const [events, setEvents] = useState([
+  const events = [
     "📢 Vedic Havan Ceremony - Feb 15, 2025",
     "🎤 Youth Awareness Seminar - Feb 25, 2025",
     "📖 Vedic Knowledge Workshop - March 10, 2025",
-  ]);
+  ];
   const [currentEvent, setCurrentEvent] = useState(0);
 
   useEffect(() => {
@@ -15,17 +16,19 @@ export default function Header() {
       setCurrentEvent((prev) => (prev + 1) % events.length);
     }, 5000);
     return () => clearInterval(eventInterval);
-  }, []);
+  }, [events.length]); // ✅ Fix dependency warning
 
   return (
     <header className="fixed top-0 w-full bg-gradient-to-r from-orange-600 to-yellow-500 text-white shadow-lg z-[1000]">
       <div className="flex justify-between items-center px-6 py-3">
         {/* Logo with Glow Effect */}
         <Link href="/">
-          <img
+          <Image
             src="/images/arya-samaj-logo.jpg"
             alt="Arya Samaj Logo"
-            className="h-14 transition-transform transform hover:scale-105 hover:shadow-lg"
+            width={56} // Adjusted size
+            height={56}
+            className="transition-transform transform hover:scale-105 hover:shadow-lg"
           />
         </Link>
 
@@ -46,7 +49,7 @@ export default function Header() {
       {/* Sanskrit Shloka Marquee */}
       <div className="bg-orange-700 text-white text-sm py-1 text-center font-semibold">
         <marquee behavior="scroll" direction="left">
-          "ॐ असतो मा सद्गमय । तमसो मा ज्योतिर्गमय । मृत्योर्मा अमृतं गमय ॥"
+          &quot;ॐ असतो मा सद्गमय । तमसो मा ज्योतिर्गमय । मृत्योर्मा अमृतं गमय ॥&quot;
         </marquee>
       </div>
 

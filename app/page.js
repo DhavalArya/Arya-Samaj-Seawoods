@@ -14,7 +14,6 @@ const Events = lazy(() => import("./components/Events"));
 const Committee = lazy(() => import("./components/Committee"));
 const VedicKnowledge = lazy(() => import("./components/VedicKnowledge"));
 const Testimonials = lazy(() => import("./components/Testimonials"));
-const Contact = lazy(() => import("./components/Contact"));
 const WhyAryaSamaj = lazy(() => import("./components/WhyAryaSamaj"));
 const MissionVision = lazy(() => import("./components/MissionVision"));
 const StoriesOfTransformation = lazy(() => import("./components/StoriesOfTransformation"));

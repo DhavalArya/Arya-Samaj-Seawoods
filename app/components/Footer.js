@@ -1,14 +1,84 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Footer() {
-  const [panchang, setPanchang] = useState({
-    tithi: "Shukla Paksha Tritiya",
-    nakshatra: "Rohini",
-    sunrise: "06:42 AM",
-    sunset: "06:30 PM",
-  });
+  // Did You Know? Facts
+  const didYouKnowFacts = [
+    "Over 75% of Indian freedom fighters were influenced by Arya Samaj principles.",
+    "Bhagat Singh was inspired by Maharshi Dayanand Saraswati’s Satyarth Prakash.",
+    "Lala Lajpat Rai, an Arya Samaji, was called ‘Punjab Kesari’ for his role in India’s freedom struggle.",
+    "Arya Samaj played a key role in promoting Swadeshi and banning foreign goods during the independence movement.",
+    "Swami Shraddhanand, an Arya Samaj leader, was martyred for promoting national unity and education.",
+    "Subhash Chandra Bose admired Arya Samaj for its fearless call to fight against British rule.",
+    "Maharshi Dayanand was the first to demand 'Swarajya' in 1875, decades before Gandhiji.",
+    "Arya Samaj established Gurukuls to educate revolutionaries like Ram Prasad Bismil and Rajguru.",
+    "Satyarth Prakash inspired many revolutionaries to reject caste discrimination and fight for equality.",
+    "The first Swadeshi movement was inspired by Arya Samaj's call for economic independence.",
+    "Swami Shraddhanand fought against untouchability and established ‘Shuddhi’ movements to bring back converted Hindus.",
+    "Arya Samaj supported widow remarriage and fought against child marriage, decades before legal reforms.",
+    "Arya Samaj built the first indigenous publishing houses to print books against British propaganda.",
+    "The Vedas do not support idol worship; instead, they emphasize meditation and inner realization.",
+    "The Bhagavad Gita (2.47) teaches that one must focus on action, not results.",
+    "Atharvaveda (6.133) highlights the importance of meditation for mental peace and well-being.",
+    "Manusmriti (6.92) promotes vegetarianism and warns against animal cruelty.",
+    "Upanishads emphasize that true wealth is knowledge, not gold or possessions.",
+    "Arya Samaj promoted education for women in an era when it was denied to them.",
+    "Ramayana describes Lord Ram as an ideal king who followed Raj Dharma above personal interests.",
+    "The Mahabharata contains the world's first discussion on statecraft, politics, and governance.",
+    "Bhagavad Gita (6.5) teaches self-reliance: 'Lift yourself by your own efforts.'",
+    "Maharshi Dayanand fought against superstitions and promoted scientific temper in Hindu society.",
+    "Sushruta, the ancient Indian surgeon, described over 300 surgical procedures centuries before modern medicine.",
+    "Arya Samaj played a crucial role in ending caste-based discrimination in temples and education.",
+    "The Vedas emphasize gender equality, mentioning women as warriors, scholars, and leaders.",
+    "Satyarth Prakash warns against blind faith and promotes reasoning and logical thinking.",
+    "Lala Hardayal, an Arya Samaji, founded the Ghadar Party to overthrow British rule.",
+    "Arya Samaj schools educated several leaders of the Azad Hind Fauj (INA) under Netaji Subhash Chandra Bose.",
+    "Maharshi Dayanand called for a return to Vedic education, which emphasized science, logic, and ethics."
+  ];
+  
+
+  // Vedic Riddles
+  const vedicRiddles = [
+    { riddle: "I exist beyond time, yet I am within you. Who am I?", answer: "The Atman (Soul) - Upanishads" },
+    { riddle: "What moves faster than the wind but is never seen?", answer: "The Mind - Bhagavad Gita (6.6)" },
+    { riddle: "What gets smaller the more you use it, yet its impact increases?", answer: "Knowledge - Rigveda" },
+    { riddle: "What has no legs yet runs?", answer: "A river (Symbolizing life and Dharma) - Atharvaveda" },
+    { riddle: "What exists before birth, during life, and after death?", answer: "The Atman (Soul) - Bhagavad Gita (2.20)" },
+    { riddle: "What is more valuable than gold, but is lost when given away freely?", answer: "Character & Reputation - Manusmriti (4.138)" },
+    { riddle: "What cannot be burned by fire, wet by water, or cut by weapons?", answer: "The Soul - Bhagavad Gita (2.23)" },
+    { riddle: "What increases when shared but disappears when hidden?", answer: "Happiness - Manusmriti" },
+    { riddle: "What is greater than the ocean yet can fit inside a single drop?", answer: "Vedic Knowledge - Rigveda" },
+    { riddle: "What belongs to everyone but can never be stolen?", answer: "Dharma (Righteousness) - Mahabharata" },
+    { riddle: "What is lighter than air yet heavier than mountains?", answer: "A promise - Ramayana" },
+    { riddle: "What is the one thing even God cannot change?", answer: "The Law of Karma - Bhagavad Gita" },
+    { riddle: "What is silent yet speaks the loudest?", answer: "A Good Deed - Manusmriti" },
+    { riddle: "What is invisible yet creates the biggest impact?", answer: "Faith - Upanishads" },
+    { riddle: "What has infinite energy but never tires?", answer: "The Sun - Rigveda" },
+    { riddle: "What is the greatest enemy of wisdom?", answer: "Ego - Satyarth Prakash" },
+    { riddle: "What binds all creatures but is never seen?", answer: "The Law of Dharma - Bhagavad Gita" },
+    { riddle: "What is the only wealth that increases when given away?", answer: "Knowledge - Rigveda" },
+    { riddle: "What is born out of truth and destroys ignorance?", answer: "Light of Knowledge - Upanishads" },
+    { riddle: "What shines brighter than fire yet is cool as the moon?", answer: "Wisdom - Bhagavad Gita" },
+    { riddle: "What can move mountains but remains unseen?", answer: "Faith & Determination - Ramayana" },
+    { riddle: "What does not age but holds the wisdom of the universe?", answer: "The Vedas" },
+    { riddle: "What has no physical form but weighs heavily on the mind?", answer: "Guilt - Manusmriti" },
+    { riddle: "What is omnipresent yet unnoticed?", answer: "Divine Energy - Upanishads" },
+    { riddle: "What is sharper than a sword and more powerful than an army?", answer: "Truth - Satyarth Prakash" },
+    { riddle: "What flows endlessly, nourishing all life?", answer: "The Ganga (Symbolizing purity and wisdom) - Rigveda" },
+    { riddle: "What is the strongest force that binds the universe?", answer: "Dharma - Bhagavad Gita" },
+    { riddle: "What cannot be seen, yet it decides your fate?", answer: "Karma - Bhagavad Gita" },
+    { riddle: "What has no beginning or end yet defines existence?", answer: "Time - Upanishads" }
+  ];
+
+  // Randomly select a fact and riddle on each reload
+  const [didYouKnow, setDidYouKnow] = useState("");
+  const [vedicRiddle, setVedicRiddle] = useState({ question: "", answer: "" });
+
+  useEffect(() => {
+    setDidYouKnow(didYouKnowFacts[Math.floor(Math.random() * didYouKnowFacts.length)]);
+    setVedicRiddle(vedicRiddles[Math.floor(Math.random() * vedicRiddles.length)]);
+  }, []);
 
   return (
     <footer className="w-full bg-gradient-to-r from-yellow-600 to-orange-500 text-white py-10 shadow-lg rounded-t-[40px]">
@@ -22,13 +92,14 @@ export default function Footer() {
           <p className="text-sm">✉️ contact@aryasamajseawoods.com</p>
         </div>
 
-        {/* 📅 Daily Panchang */}
+        {/* 📜 Did You Know & Vedic Riddle */}
         <div>
-          <h2 className="text-xl font-bold font-merriweather mb-3">📅 Daily Panchang</h2>
-          <p className="text-sm">🌙 Tithi: {panchang.tithi}</p>
-          <p className="text-sm">⭐ Nakshatra: {panchang.nakshatra}</p>
-          <p className="text-sm">🌄 Sunrise: {panchang.sunrise}</p>
-          <p className="text-sm">🌇 Sunset: {panchang.sunset}</p>
+          <h2 className="text-xl font-bold font-merriweather mb-3">📜 Did You Know?</h2>
+          <p className="text-sm italic">"{didYouKnow}"</p>
+
+          <h2 className="text-xl font-bold font-merriweather mt-4">🤔 Vedic Riddle</h2>
+          <p className="text-sm">{vedicRiddle.question}</p>
+          <p className="text-sm font-semibold">Answer: {vedicRiddle.answer}</p>
         </div>
 
         {/* 🙏 Quick Donate */}

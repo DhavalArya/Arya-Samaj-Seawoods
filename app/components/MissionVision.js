@@ -8,13 +8,13 @@ export default function MissionVision() {
       <div className="max-w-5xl mx-auto text-center">
         {/* Vedic Motto */}
         <h2 className="text-4xl font-bold font-merriweather text-orange-700">
-          "Krinvanto Vishwam Aryam"
+          &ldquo;Krinvanto Vishwam Aryam&rdquo;
         </h2>
         <p className="mt-2 text-lg font-noto-serif text-gray-800">
-          "Let us make the world noble."
+          &ldquo;Let us make the world noble.&rdquo;
         </p>
 
-        {/* Brief Explanation of "True Arya" */}
+        {/* Brief Explanation of True Arya */}
         <p className="mt-4 text-md text-gray-700 font-poppins">
           A <strong>true Arya</strong> is one who follows <strong>righteousness (Dharma), selfless service (Seva), and truth (Satya)</strong>.
           Arya Samaj envisions a world uplifted through <strong>spiritual wisdom, education, social reform, and environmental care</strong>.
