@@ -39,27 +39,30 @@ export default function DonationPopup() {
               <p className="text-gray-600 dark:text-gray-300 mb-4">
                 Your contribution helps us continue our mission. Please use the details below to donate.
               </p>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Your contribution is tax exempt under Section 80G of the Income Tax Act.
+              </p>
 
               {/* Bank Details */}
               <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-left text-sm">
                 <p className="text-gray-800 dark:text-gray-200 font-semibold">
-                  🏦 Bank Name: <span className="font-normal">State Bank of India</span>
+                  🏦 Bank Name: <span className="font-normal">Axis Bank</span>
                 </p>
                 <p className="text-gray-800 dark:text-gray-200 font-semibold">
-                  🔢 Account No: <span className="font-normal">123456789012</span>
+                  🔢 Account No: <span className="font-normal">916020037778800</span>
                 </p>
                 <p className="text-gray-800 dark:text-gray-200 font-semibold">
-                  🏷️ IFSC Code: <span className="font-normal">SBIN0001234</span>
+                  🏷️ IFSC Code: <span className="font-normal">UTIB0001365</span>
                 </p>
                 <p className="text-gray-800 dark:text-gray-200 font-semibold">
-                  💳 UPI ID: <span className="font-normal">aryasamaj@upi</span>
+                  💳 UPI ID: <span className="font-normal">Q245091890@ybl</span>
                 </p>
               </div>
 
               {/* QR Code for UPI Donations */}
               <div className="flex justify-center mt-4">
                 <Image
-                  src="/images/donation-qr-code.jpg"
+                  src="/images/donation-qr.jpg"
                   alt="Donation QR Code"
                   width={160}
                   height={160}

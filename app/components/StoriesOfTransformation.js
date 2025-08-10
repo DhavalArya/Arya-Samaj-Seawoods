@@ -6,16 +6,16 @@ import Image from "next/image"; // ✅ Use Next.js Image for optimization
 const stories = [
     {
       name: "Swami Shraddhanand’s Shuddhi Movement",
-      title: "Revival of Vedic Dharma",
-      before: "Many communities had lost their connection with Vedic teachings due to forced conversions.",
-      after: "Arya Samaj led the Shuddhi Movement to bring them back to their Vedic roots with dignity.",
+      title: "Revival of Vaidik Dharma",
+      before: "Many communities had lost their connection with Vaidik teachings due to forced conversions.",
+      after: "Arya Samaj led the Shuddhi Movement to bring them back to their Vaidik roots with dignity.",
       image: "/images/shuddhi-movement.jpg",
     },
     {
       name: "Arya Samaj Orphanages",
       title: "Transforming Lives of Orphans",
       before: "Many orphaned children in India had no access to education or proper upbringing.",
-      after: "Arya Samaj established orphanages that provided them free education, Vedic values & a bright future.",
+      after: "Arya Samaj established orphanages that provided them free education, Vaidik values & a bright future.",
       image: "/images/orphanage.jpg",
     },
     {
@@ -29,13 +29,13 @@ const stories = [
       name: "Arya Veer & Veerangana Dal",
       title: "Training Youth & Disaster Relief",
       before: "Many youth lacked proper guidance on mental & physical discipline.",
-      after: "Arya Veer Dal & Veerangana Dal train youth in physical fitness, Vedic values & emergency response.",
+      after: "Arya Veer Dal & Veerangana Dal train youth in physical fitness, Vaidik values & emergency response.",
       image: "/images/arya-veer-dal.jpg",
     },
     {
       name: "Gurukuls & Vaidik Education",
-      title: "Preserving Vedic Culture & Universal Education",
-      before: "True Vedic culture & ancient education methods were fading away.",
+      title: "Preserving Vaidik Culture & Universal Education",
+      before: "True Vaidik culture & ancient education methods were fading away.",
       after: "Arya Samaj established Gurukuls where students receive knowledge of Vedas, Sanskrit & modern subjects.",
       image: "/images/gurukul.jpg",
     },
@@ -57,7 +57,7 @@ const stories = [
       name: "Fighting Blind Faith & Superstition",
       title: "Removing Andhshraddha, Idol Worship & False Rituals",
       before: "Millions suffered due to baseless rituals, superstitions & idol worship.",
-      after: "Arya Samaj spread true Vedic knowledge, promoting rational thinking & social reform.",
+      after: "Arya Samaj spread true Vaidik knowledge, promoting rational thinking & social reform.",
       image: "/images/superstition-removal.jpg",
     }
 ];

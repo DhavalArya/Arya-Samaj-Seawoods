@@ -23,7 +23,7 @@ export default function WhyAryaSamaj() {
           <FaLightbulb className="text-orange-600 text-4xl mx-auto"/>
           <h3 className="mt-4 text-xl font-bold font-merriweather">Rational & Scientific</h3>
           <p className="text-gray-700 text-sm mt-2">
-            Arya Samaj promotes Vedic knowledge based on <strong>science, logic, and truth</strong>, rejecting blind faith.
+            Arya Samaj promotes Vaidik knowledge based on <strong>science, logic, and truth</strong>, rejecting blind faith.
           </p>
         </motion.div>
 
@@ -35,7 +35,7 @@ export default function WhyAryaSamaj() {
           <FaBookOpen className="text-orange-600 text-4xl mx-auto"/>
           <h3 className="mt-4 text-xl font-bold font-merriweather">Education & Reform</h3>
           <p className="text-gray-700 text-sm mt-2">
-            Established <strong>Gurukuls, DAV Schools, and universities</strong>, empowering youth with <strong>Vedic and modern knowledge</strong>.
+            Established <strong>Gurukuls, DAV Schools, and universities</strong>, empowering youth with <strong>Vaidik and modern knowledge</strong>.
           </p>
         </motion.div>
 

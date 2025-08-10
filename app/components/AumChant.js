@@ -6,9 +6,18 @@ export default function AumChant() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
+  // 🔁 Sync audio state on mount
   useEffect(() => {
+    const savedState = localStorage.getItem("aum-playing") === "true";
+    setIsPlaying(savedState);
+
+    if (savedState && audioRef.current) {
+      audioRef.current.play().catch(err => console.error("Auto-play failed:", err));
+    }
+
     const handleInteraction = () => {
-      if (!isPlaying) {
+      if (savedState && !audioRef.current?.paused) return;
+      if (savedState) {
         audioRef.current.play().catch((error) => {
           console.error("Autoplay prevented:", error);
         });
@@ -24,9 +33,11 @@ export default function AumChant() {
       document.removeEventListener("click", handleInteraction);
       document.removeEventListener("touchstart", handleInteraction);
     };
-  }, [isPlaying]);
+  }, []);
 
   const toggleAudio = () => {
+    if (!audioRef.current) return;
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -34,7 +45,9 @@ export default function AumChant() {
         console.error("Playback prevented:", error);
       });
     }
+
     setIsPlaying(!isPlaying);
+    localStorage.setItem("aum-playing", (!isPlaying).toString());
   };
 
   return (

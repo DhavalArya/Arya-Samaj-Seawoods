@@ -9,8 +9,8 @@ export default function Contact() {
         {/* Contact Details */}
         <div className="w-full md:w-1/2">
           <p className="text-lg"><FaMapMarkerAlt className="inline-block text-red-500 mr-2" /> Seawoods, Navi Mumbai</p>
-          <p className="text-lg"><FaPhone className="inline-block text-green-500 mr-2" /> +91 9876543210</p>
-          <p className="text-lg"><FaEnvelope className="inline-block text-blue-500 mr-2" /> contact@aryasamajseawoods.com</p>
+          <p className="text-lg"><FaPhone className="inline-block text-green-500 mr-2" /> +91 9223344556</p>
+          <p className="text-lg"><FaEnvelope className="inline-block text-blue-500 mr-2" /> contact_aryasamajseawoods@gmail.com</p>
         </div>
 
         {/* Google Map */}

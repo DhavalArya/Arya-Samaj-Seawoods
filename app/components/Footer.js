@@ -33,12 +33,12 @@ import { useState, useEffect, useMemo } from "react";
     "Satyarth Prakash warns against blind faith and promotes reasoning and logical thinking.",
     "Lala Hardayal, an Arya Samaji, founded the Ghadar Party to overthrow British rule.",
     "Arya Samaj schools educated several leaders of the Azad Hind Fauj (INA) under Netaji Subhash Chandra Bose.",
-    "Maharshi Dayanand called for a return to Vedic education, which emphasized science, logic, and ethics."
+    "Maharshi Dayanand called for a return to Vaidik education, which emphasized science, logic, and ethics."
   ];
   
 
-  // Vedic Riddles
-  const vedicRiddles = [
+  // Vaidik Riddles
+  const vaidikRiddles = [
     { riddle: "I exist beyond time, yet I am within you. Who am I?", answer: "The Atman (Soul) - Upanishads" },
     { riddle: "What moves faster than the wind but is never seen?", answer: "The Mind - Bhagavad Gita (6.6)" },
     { riddle: "What gets smaller the more you use it, yet its impact increases?", answer: "Knowledge - Rigveda" },
@@ -47,7 +47,7 @@ import { useState, useEffect, useMemo } from "react";
     { riddle: "What is more valuable than gold, but is lost when given away freely?", answer: "Character & Reputation - Manusmriti (4.138)" },
     { riddle: "What cannot be burned by fire, wet by water, or cut by weapons?", answer: "The Soul - Bhagavad Gita (2.23)" },
     { riddle: "What increases when shared but disappears when hidden?", answer: "Happiness - Manusmriti" },
-    { riddle: "What is greater than the ocean yet can fit inside a single drop?", answer: "Vedic Knowledge - Rigveda" },
+    { riddle: "What is greater than the ocean yet can fit inside a single drop?", answer: "Vaidik Knowledge - Rigveda" },
     { riddle: "What belongs to everyone but can never be stolen?", answer: "Dharma (Righteousness) - Mahabharata" },
     { riddle: "What is lighter than air yet heavier than mountains?", answer: "A promise - Ramayana" },
     { riddle: "What is the one thing even God cannot change?", answer: "The Law of Karma - Bhagavad Gita" },
@@ -73,14 +73,14 @@ import { useState, useEffect, useMemo } from "react";
 export default function Footer() {
   // Memoize arrays to prevent unnecessary re-renders
   const memoizedFacts = useMemo(() => didYouKnowFacts, []);
-  const memoizedRiddles = useMemo(() => vedicRiddles, []);
+  const memoizedRiddles = useMemo(() => vaidikRiddles, []);
 
   const [didYouKnow, setDidYouKnow] = useState("");
-  const [vedicRiddle, setVedicRiddle] = useState({ question: "", answer: "" });
+  const [vaidikRiddle, setVaidikRiddle] = useState({ question: "", answer: "" });
 
   useEffect(() => {
     setDidYouKnow(memoizedFacts[Math.floor(Math.random() * memoizedFacts.length)]);
-    setVedicRiddle(memoizedRiddles[Math.floor(Math.random() * memoizedRiddles.length)]);
+    setVaidikRiddle(memoizedRiddles[Math.floor(Math.random() * memoizedRiddles.length)]);
   }, [memoizedFacts, memoizedRiddles]);
 
   return (
@@ -91,32 +91,49 @@ export default function Footer() {
         <div>
           <h2 className="text-xl font-bold font-merriweather mb-3">📍 Contact Us</h2>
           <p className="text-sm">Seawoods, Navi Mumbai</p>
-          <p className="text-sm">📞 +91 9876543210</p>
-          <p className="text-sm">✉️ contact@aryasamajseawoods.com</p>
+          <p className="text-sm">📞 +91 9223344556, +91 9323022055</p>
+          <p className="text-sm">✉️ aryasamajseawoods@gmail.com</p>
         </div>
 
-        {/* 📜 Did You Know & Vedic Riddle */}
+        {/* 📜 Did You Know & Vaidik Riddle */}
         <div>
           <h2 className="text-xl font-bold font-merriweather mb-3">📜 Did You Know?</h2>
           <p className="text-sm italic">{"\"" + didYouKnow + "\""}</p>
 
-          <h2 className="text-xl font-bold font-merriweather mt-4">🤔 Vedic Riddle</h2>
-          <p className="text-sm">{vedicRiddle.riddle}</p>
-          <p className="text-sm font-semibold">Answer: {vedicRiddle.answer}</p>
+          <h2 className="text-xl font-bold font-merriweather mt-4">🤔 Vaidik Riddle</h2>
+          <p className="text-sm">{vaidikRiddle.riddle}</p>
+          <p className="text-sm font-semibold">Answer: {vaidikRiddle.answer}</p>
         </div>
 
         {/* 🙏 Quick Donate */}
-        <div className="text-center">
-          <h2 className="text-xl font-bold font-merriweather mb-3">🙏 Quick Donate</h2>
-          <Image 
-            src="/images/donation-qr.jpg" 
-            alt="Donation QR" 
-            width={120} 
-            height={120} 
+        <div className="text-center bg-gradient-to-br from-orange-100 via-pink-50 to-yellow-100 p-4 rounded-xl shadow-lg border border-orange-200">
+          <h2 className="text-2xl font-bold font-merriweather text-orange-700 mb-2">🙏 Quick Donate</h2>
+
+          {/* Highlighted 80G Info */}
+          <div className="flex justify-center items-center gap-2 text-green-800 text-sm font-semibold mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9V7a1 1 0 112 0v2a1 1 0 11-2 0zm1 4a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+            </svg>
+            <p>Your contribution is tax exempt under Section 80G of the Income Tax Act.</p>
+          </div>
+
+          {/* Optional CTA line */}
+          <p className="text-xs text-gray-600 italic mb-2">
+            Support Arya Samaj’s selfless seva initiatives 🙏
+          </p>
+
+          {/* QR Image */}
+          <Image
+            src="/images/donation-qr.jpg"
+            alt="Donation QR"
+            width={120}
+            height={120}
             className="mx-auto rounded-lg shadow-md"
           />
-          <p className="text-sm mt-2">Scan to Donate</p>
+
+          <p className="text-sm mt-2 text-gray-700 font-medium">Scan to Donate</p>
         </div>
+
       </div>
 
       {/* 📍 Google Maps Section with Exact Location */}
@@ -145,11 +162,11 @@ export default function Footer() {
       {/* 🌍 Social Media Links */}
       <div className="mt-6 text-center text-sm font-light">
         <p>© {new Date().getFullYear()} Arya Samaj - Seawoods. All rights reserved.</p>
-        <p className="mt-2">
+        {/* <p className="mt-2">
           <a href="#" className="mx-2 hover:underline">Facebook</a> |
           <a href="#" className="mx-2 hover:underline">Instagram</a> |
           <a href="#" className="mx-2 hover:underline">Twitter</a>
-        </p>
+        </p> */}
       </div>
     </footer>
   );

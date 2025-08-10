@@ -29,7 +29,7 @@ body {
   clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 0% 100%);
 }
 
-/* Section Background with Vedic Textures */
+/* Section Background with vaidik Textures */
 .section {
   position: relative;
   padding: 60px 0;
@@ -130,7 +130,7 @@ section:hover {
   animation: fadeInScale 0.8s ease-out;
 }
 
-/* 📜 Vedic Wisdom Box */
+/* 📜 vaidik Wisdom Box */
 .quote-box {
   background: var(--card-bg);
   padding: 1rem;
@@ -398,4 +398,26 @@ body {
 .dark .card {
   background: var(--secondary-bg-dark);
   box-shadow: 0px 6px 20px rgba(255, 140, 0, 0.2);
+}
+
+.event-day {
+  background-color: #fde68a !important; /* amber-200 */
+  color: #92400e !important; /* amber-900 */
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.scroll-container {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }

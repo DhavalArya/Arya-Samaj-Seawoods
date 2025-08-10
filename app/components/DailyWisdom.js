@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FaWhatsapp, FaXTwitter, FaInstagram, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { FaWhatsapp, FaXTwitter, FaInstagram, FaFacebook, FaLinkedin, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 const quotes = [
   { 
@@ -182,20 +182,67 @@ export default function DailyWisdom() {
   //   }
   // };
 
+  const getEnrichedMessage = () => {
+    const quote = quotes[currentQuoteIndex];
+    const today = new Date().toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    return `🕉️ Vaidic Wisdom for ${today} 🕉️
+
+    📜 Shloka:
+    ${quote.text}
+
+    💬 Meaning:
+    "${quote.meaning}"
+
+    🧘‍♂️ Source: ${quote.source}
+
+    🔸 Shared via Arya Samaj Seawoods
+    🌐 https://aryasamajseawoods.co.in
+    📞 +91-9223344556, +91-9323022055
+    📧 aryasamajseawoods@gmail.com
+    📍 https://maps.app.goo.gl/QQUvD9oD1yWA9ps8A
+
+    🕯️ Embrace Vaidic values. Share knowledge. Inspire others.`;
+  };
+
   const shareOnWhatsApp = () => {
-    const message = `${quotes[currentQuoteIndex].text}\n"${quotes[currentQuoteIndex].meaning}"\n- ${quotes[currentQuoteIndex].source}`;
+    const message = getEnrichedMessage();
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
   };
 
   const shareOnX = () => {
-    const message = `${quotes[currentQuoteIndex].text}\n"${quotes[currentQuoteIndex].meaning}"\n- ${quotes[currentQuoteIndex].source}`;
+    const message = getEnrichedMessage();
     const url = `https://x.com/intent/tweet?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
   };
 
   const shareOnInstagram = () => {
-    alert("Instagram sharing is currently not available directly via web. You can copy the quote and share it manually.");
+    const message = getEnrichedMessage();
+    navigator.clipboard.writeText(message).then(() => {
+      alert("Quote copied to clipboard! Open Instagram and paste it into your post or story.");
+      window.open("https://www.instagram.com/", "_blank");
+    });
+  };
+
+  const shareOnFacebook = () => {
+    const message = getEnrichedMessage();
+    navigator.clipboard.writeText(message).then(() => {
+      alert("Shloka copied to clipboard! Open Facebook and paste it into your post.");
+      window.open("https://www.facebook.com/", "_blank");
+    });
+  };
+
+  const shareOnLinkedIn = () => {
+    const message = getEnrichedMessage();
+    navigator.clipboard.writeText(message).then(() => {
+      alert("Shloka copied to clipboard! Open LinkedIn and paste it into your post.");
+      window.open("https://www.linkedin.com/", "_blank");
+    });
   };
 
   const nextQuote = () => {
@@ -210,7 +257,7 @@ export default function DailyWisdom() {
     <section className="relative bg-yellow-100 text-gray-900 rounded-lg shadow-lg p-6 mx-auto w-3/4 md:w-2/3 lg:w-1/2">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-orange-700 mb-2 flex justify-center items-center">
-          📖 Daily Vedic Wisdom
+          📖 Daily Vaidik Wisdom
         </h2>
         <p className="text-3xl font-sans text-gray-800 font-semibold mb-2">{quotes[currentQuoteIndex].text}</p>
         <p className="text-lg text-gray-600 italic">{`"${quotes[currentQuoteIndex].meaning}"`}</p>
@@ -253,6 +300,20 @@ export default function DailyWisdom() {
           className="p-2 rounded-full bg-pink-500 text-white hover:bg-pink-600 transition"
         >
           <FaInstagram size={20} />
+        </button>
+
+        <button
+          onClick={shareOnFacebook}
+          className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
+        >
+          <FaFacebook size={20} />
+        </button>
+
+        <button
+          onClick={shareOnLinkedIn}
+          className="p-2 rounded-full bg-blue-800 text-white hover:bg-blue-900 transition"
+        >
+          <FaLinkedin size={20} />
         </button>
 
         <button 

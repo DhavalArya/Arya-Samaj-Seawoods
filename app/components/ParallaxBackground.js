@@ -24,19 +24,19 @@ export default function ParallaxBackground() {
       {/* 🕉️ Floating Hindu Motifs */}
       <motion.img
         src="/images/vedic-pattern1.jpg"
-        alt="Vedic Motif 1"
+        alt="Vaidik Motif 1"
         className="absolute top-10 left-10 w-40 opacity-25 parallax-layer"
         style={{ y: y1 }}
       />
       <motion.img
         src="/images/vedic-pattern2.jpg"
-        alt="Vedic Motif 2"
+        alt="Vaidik Motif 2"
         className="absolute top-1/2 right-10 w-44 opacity-20 parallax-layer"
         style={{ y: y2 }}
       />
       <motion.img
         src="/images/vedic-pattern3.jpg"
-        alt="Vedic Motif 3"
+        alt="Vaidik Motif 3"
         className="absolute bottom-10 left-1/3 w-36 opacity-25 parallax-layer"
         style={{ y: y3 }}
       />

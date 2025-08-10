@@ -3,12 +3,50 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Hero() {
+export default function Hero({ setShowForm }) {
   const quotes = [
     "ॐ असतो मा सद्गमय। तमसो मा ज्योतिर्गमय। मृत्योर्मा अमृतं गमय॥",
-    "The purpose of Arya Samaj is to make the world noble.",
-    "Truth alone triumphs - सत्यमेव जयते",
+    "सच्चाई को कोई बुझा नहीं सकता, वह अग्नि की तरह जलती है।",
+    "Truth is not afraid of questioning — it shines brighter when tested.",
+    "आ नो भद्राः क्रतवो यन्तु विश्वतः।",
+    "Be noble. Be truthful. Be fearless.",
+    "कृण्वन्तो विश्वमार्यम्।",
+    "ईश्वर एक है, वही सत्य है।",
+    "Discipline is the bridge between thought and transformation.",
+    "वेद का ज्ञान मनुष्य को अंधकार से प्रकाश की ओर ले जाता है।",
+    "Speak the truth. Do your duty. Love all creation.",
+    "नर वही जो नरता निभाए।",
+    "Let your actions be inspired by selflessness and service.",
+    "श्रद्धा, तप, और यज्ञ ही सच्चे विकास के पथ हैं।",
+    "ॐ पूर्णमदः पूर्णमिदं पूर्णात् पूर्णमुदच्यते॥",
+    "Serve humanity. Worship truth. Reject superstition.",
+    "धर्म वह है जो सबके हित का विचार करे।",
+    "Be a light — not just a lamp.",
+    "जब तक जीवन है, तब तक सीखना है।",
+    "ॐ सह नाववतु। सह नौ भुनक्तु। सह वीर्यं करवावहै॥",
+    "The world becomes Arya when you become one first.",
+    "राष्ट्र का उत्थान व्यक्ति के चरित्र पर निर्भर करता है।",
+    "Be like the sun — rise for everyone, shine without pride.",
+    "ईश्वर को पाने का मार्ग कर्म है, कर्म में यज्ञ हो।",
+    "ॐ शं नो मित्रः शं वरुणः शं नो भवत्वर्यमा।",
+    "Live by truth, not by tradition.",
+    "समाज तभी आर्य बनेगा जब मनुष्य आर्य होगा।",
+    "Let knowledge purify your mind, and service purify your soul.",
+    "सत्य के मार्ग पर चलना कठिन है, पर वही शाश्वत है।",
+    "The Vedas teach us to live in harmony with nature and self.",
+    "ॐ नमः शिवाय — परंतु शिव वही जो रचना में शिवत्व लाए।",
+    "A selfless act is the truest form of prayer.",
+    "भक्ति वही जो जीवन में नीति लाए।",
+    "मौन वह नहीं जो शब्द रोक दे, मौन वह जो विकार रोक दे।",
+    "Your inner fire must be lit by knowledge, not by noise.",
+    "ॐ दीपो ज्योतिर्ज्ञानम्।",
+    "Fear none, follow truth, be humble — this is Ved Marg.",
+    "ह्रदय में सत्य, वाणी में प्रेम, और कर्म में न्याय हो।",
+    "The divine is not found in idols, but in ideals.",
+    "ज्ञान दीपक है, सेवा उसका तेल, और त्याग उसकी लौ।",
+    "ॐ स्वस्ति न इन्द्रो वृद्धश्रवाः।"
   ];
+
   const [currentQuote, setCurrentQuote] = useState(0);
 
   useEffect(() => {
@@ -16,15 +54,15 @@ export default function Hero() {
       setCurrentQuote((prev) => (prev + 1) % quotes.length);
     }, 5000);
     return () => clearInterval(quoteInterval);
-  }, [quotes.length]); // ✅ Fix dependency warning
+  }, [quotes.length]);
 
   return (
     <section className="relative w-full text-center pt-[140px] pb-16 bg-vedic-pattern text-white rounded-b-[80px] shadow-lg mt-[120px]">
-      {/* Subtle Background Animation */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/vedic-bg.webp"
-          alt="Vedic Background"
+          alt="Vaidik Background"
           layout="fill"
           objectFit="cover"
           className="opacity-40 transition-opacity duration-1000"
@@ -48,6 +86,7 @@ export default function Hero() {
         <motion.button
           whileHover={{ scale: 1.1 }}
           className="mt-6 px-6 py-3 bg-orange-600 hover:bg-orange-700 transition rounded-full text-white font-semibold shadow-lg"
+          onClick={() => setShowForm(true)}
         >
           Join the Movement
         </motion.button>

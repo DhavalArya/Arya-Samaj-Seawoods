@@ -6,7 +6,7 @@ export default function MissionVision() {
   return (
     <section className="py-16 px-6 bg-gradient-to-b from-orange-100 to-yellow-50 text-gray-900">
       <div className="max-w-5xl mx-auto text-center">
-        {/* Vedic Motto */}
+        {/* Vaidik Motto */}
         <h2 className="text-4xl font-bold font-merriweather text-orange-700">
           &ldquo;Krinvanto Vishwam Aryam&rdquo;
         </h2>
@@ -32,7 +32,7 @@ export default function MissionVision() {
           <FaPrayingHands className="text-orange-600 text-5xl mx-auto animate-pulse"/>
           <h3 className="mt-4 text-xl font-bold font-merriweather">Spiritual Upliftment</h3>
           <p className="text-gray-700 text-sm mt-2">
-            Spreading <strong>Vedic wisdom</strong> through <strong>Satsangs, Yajnas, and discourses</strong> for a <strong>righteous life</strong>.
+            Spreading <strong>Vaidik wisdom</strong> through <strong>Satsangs, Yajnas, and discourses</strong> for a <strong>righteous life</strong>.
           </p>
         </motion.div>
 

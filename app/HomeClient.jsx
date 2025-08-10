@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense, lazy } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
+import MembershipModal from "./components/MembershipModal";
 import Footer from "./components/Footer";
 import DonationPopup from "./components/DonationPopup";
 import AumChant from "./components/AumChant";
@@ -12,17 +13,24 @@ import OpeningAnimation from "./components/OpeningAnimation";
 const DailyWisdom = lazy(() => import("./components/DailyWisdom"));
 const Events = lazy(() => import("./components/Events"));
 const Committee = lazy(() => import("./components/Committee"));
-const VedicKnowledge = lazy(() => import("./components/VedicKnowledge"));
+const VaidikKnowledge = lazy(() => import("./components/VedicKnowledge"));
 const Testimonials = lazy(() => import("./components/Testimonials"));
 const WhyAryaSamaj = lazy(() => import("./components/WhyAryaSamaj"));
 const MissionVision = lazy(() => import("./components/MissionVision"));
 const StoriesOfTransformation = lazy(() => import("./components/StoriesOfTransformation"));
-const VedicQuiz = lazy(() => import("./components/VedicQuiz"));
+const VaidikQuiz = lazy(() => import("./components/VedicQuiz"));
 const Slideshow = lazy(() => import("./components/Slideshow"));
+const Activities = lazy(() => import("./components/Activities"));
+
+export const metadata = {
+  title: "Arya Samaj Seawoods",
+  description: "Official site of Arya Samaj Seawoods",
+};
 
 export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     // ✅ Check Dark Mode Status from Local Storage
@@ -48,7 +56,8 @@ export default function Home() {
           <AumChant />
           <Header />
           <DarkModeToggle />
-          <Hero />
+          <Hero setShowForm={setShowForm} />
+          <MembershipModal showForm={showForm} setShowForm={setShowForm} />
 
           <main className="main-content">
             <Suspense fallback={<div className="loader">Loading Wisdom...</div>}>
@@ -60,8 +69,11 @@ export default function Home() {
             <Suspense fallback={<div className="loader">Loading Events...</div>}>
               <Events />
             </Suspense>
+            <Suspense fallback={<div>Loading Activities...</div>}>
+              <Activities />
+            </Suspense>
             <Suspense fallback={<div className="loader">Loading Knowledge...</div>}>
-              <VedicKnowledge />
+              <VaidikKnowledge />
             </Suspense>
             <Suspense fallback={<div className="loader">Loading Why Arya Samaj...</div>}>
               <WhyAryaSamaj />
@@ -81,8 +93,8 @@ export default function Home() {
             {/* <Suspense fallback={<div className="loader">Loading Contact...</div>}>
               <Contact />
             </Suspense> */}
-            <Suspense fallback={<div className="loader">Loading Vedic Quiz...</div>}>
-              <VedicQuiz />
+            <Suspense fallback={<div className="loader">Loading Vaidik Quiz...</div>}>
+              <VaidikQuiz />
             </Suspense>
           </main>
 
