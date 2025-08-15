@@ -69,7 +69,7 @@ export default function Home() {
           <Header />
           <DarkModeToggle isDark={isDarkMode} toggle={() => setIsDarkMode((d) => !d)} />
           <Hero setShowForm={setShowForm} />
-          <MembershipModal show={showForm} onClose={() => setShowForm(false)} />
+          <MembershipModal showForm={showForm} setShowForm={setShowForm} onClose={() => setShowForm(false)} />
 
           <main className="main-content">
             <Suspense fallback={<div className="loader">Loading Wisdom...</div>}><DailyWisdom /></Suspense>
