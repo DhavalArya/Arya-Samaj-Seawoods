@@ -16,7 +16,7 @@ export default function Header() {
 
   const [shlokas, setShlokas] = useState([]);
   const [currentShloka, setCurrentShloka] = useState(0);
-  const [animate, setAnimate] = useState(false);
+  // const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
     if (events.length === 0) return;
@@ -32,7 +32,7 @@ export default function Header() {
       .then(res => res.json())
       .then(data => {
         setShlokas(data);
-        setAnimate(true); // Start animation after loading
+        // setAnimate(true); // Start animation after loading
       })
       .catch(err => console.error("Failed to load shlokas:", err));
   }, []);
