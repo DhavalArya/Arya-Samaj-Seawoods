@@ -357,10 +357,18 @@ export default function VaidikQuiz() {
     localStorage.setItem("vaidikPastAttempts", JSON.stringify(pastAttempts));
   }, [pastAttempts]);
 
+    // Restart quiz helper
+  const resetQuiz = useCallback(() => {
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setQuizFinished(false);
+  }, []);
+
   // Reset quiz whenever level changes
   useEffect(() => {
     resetQuiz();
-  }, [level]);
+  }, [level, resetQuiz]);
 
   // Handler for selecting answer
   const handleAnswer = useCallback(
@@ -393,14 +401,6 @@ export default function VaidikQuiz() {
     },
     [currentQuestion, currentQuiz, selectedAnswer, score]
   );
-
-  // Restart quiz helper
-  const resetQuiz = useCallback(() => {
-    setCurrentQuestion(0);
-    setSelectedAnswer(null);
-    setScore(0);
-    setQuizFinished(false);
-  }, []);
 
   // Handle restart button
   const handleRestart = useCallback(() => {
@@ -480,7 +480,6 @@ export default function VaidikQuiz() {
                   disabled={!!selectedAnswer}
                   onClick={() => handleAnswer(option)}
                   whileTap={{ scale: 0.9 }}
-                  role="listitem"
                   aria-pressed={isSelected}
                   tabIndex={selectedAnswer ? -1 : 0}
                 >

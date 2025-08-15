@@ -82,7 +82,7 @@ export default function StoriesOfTransformation() {
           id="transformation-heading"
           className="text-4xl font-bold font-merriweather text-orange-700"
         >
-          Legacy of Arya Samaj's Reforms
+          Legacy of Arya Samaj&apos;s Reforms
         </h2>
         <p className="mt-3 text-lg font-noto-serif text-gray-800">
           Lives and communities transformed through Arya Samaj’s unwavering dedication to <strong>dharma, reform, and selfless service</strong>.

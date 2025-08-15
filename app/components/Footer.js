@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
   // Did You Know? Facts
   const DID_YOU_KNOW_FACTS = [
@@ -96,7 +96,7 @@ export default function Footer() {
         {/* 📜 Did You Know & Vaidik Riddle */}
         <div>
           <h2 className="text-xl font-bold font-merriweather mb-3">📜 Did You Know?</h2>
-          <p className="text-sm italic">"{didYouKnow}"</p>
+          <p className="text-sm italic">&quot;{didYouKnow}&quot;</p>
 
           <h2 className="text-xl font-bold font-merriweather mt-4">🤔 Vaidik Riddle</h2>
           <p className="text-sm">{vaidikRiddle.riddle}</p>
