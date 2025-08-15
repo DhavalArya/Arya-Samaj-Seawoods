@@ -66,75 +66,90 @@ export default function StoriesOfTransformation() {
   const [flipped, setFlipped] = useState(Array(stories.length).fill(false));
 
   const toggleFlip = (index) => {
-    setFlipped((prevFlipped) => {
-      const newFlipped = [...prevFlipped];
-      newFlipped[index] = !newFlipped[index];
-      return newFlipped;
-    });
+    setFlipped((prev) =>
+      prev.map((val, i) => (i === index ? !val : val))
+    );
   };
 
   return (
-    <section className="py-16 px-6 bg-gradient-to-b from-yellow-50 to-orange-100 text-gray-900">
+    <section
+      id="transformation-stories"
+      aria-labelledby="transformation-heading"
+      className="py-16 px-6 bg-gradient-to-b from-yellow-50 to-orange-100 text-gray-900"
+    >
       <div className="max-w-5xl mx-auto text-center">
-        <h2 className="text-4xl font-bold font-merriweather text-orange-700">
-          Stories of Transformation
+        <h2
+          id="transformation-heading"
+          className="text-4xl font-bold font-merriweather text-orange-700"
+        >
+          Legacy of Arya Samaj's Reforms
         </h2>
         <p className="mt-3 text-lg font-noto-serif text-gray-800">
-          Real lives changed through Arya Samaj’s mission of <strong>education, empowerment & selfless service</strong>.
+          Lives and communities transformed through Arya Samaj’s unwavering dedication to <strong>dharma, reform, and selfless service</strong>.
         </p>
       </div>
 
-      {/* Stories Grid */}
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
-        {stories.map((story, index) => (
-          <motion.div
-            key={index}
-            whileHover={{ scale: 1.05 }}
-            className="relative w-full h-[300px] cursor-pointer perspective"
-            onClick={() => toggleFlip(index)}
-          >
-            <div
-              className={`relative w-full h-full transform transition-transform duration-700 ${
-                flipped[index] ? "rotate-y-180" : ""
-              }`}
+      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        {stories.map((story, index) => {
+          const isFlipped = flipped[index];
+          return (
+            <motion.article
+              key={index}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => toggleFlip(index)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  toggleFlip(index);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`Flip card for ${story.name}`}
+              className="relative w-full h-[360px] sm:h-[400px] cursor-pointer outline-none perspective"
             >
-              {/* Front Side */}
-              <motion.div
-                className={`absolute w-full h-full bg-white shadow-lg rounded-lg flex flex-col justify-center items-center text-center backface-hidden p-5 ${
-                  flipped[index] ? "hidden" : "block"
+              <div
+                className={`relative w-full h-full duration-700 transform-style preserve-3d transition-transform ${
+                  isFlipped ? "rotate-y-180" : ""
                 }`}
               >
-                <h3 className="text-xl font-bold font-merriweather text-orange-800">{story.name}</h3>
-                <p className="text-sm text-gray-600 mt-1">{story.title}</p>
-                <p className="mt-3 text-sm italic">&ldquo;{story.before}&rdquo;</p>
-                <button className="mt-3 text-orange-600 font-bold">Tap to See Transformation</button>
-              </motion.div>
-
-              {/* Back Side - Image + Text */}
-              <motion.div
-                className={`absolute w-full h-full bg-orange-600 text-white shadow-lg rounded-lg flex flex-col justify-center items-center text-center transform rotate-y-180 backface-hidden p-5 ${
-                  flipped[index] ? "block" : "hidden"
-                }`}
-              >
-                <div className="relative w-full h-[160px]">
-                  <Image
-                    src={story.image}
-                    alt={story.name}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-lg"
-                  />
+                {/* Front */}
+                <div className="absolute inset-0 bg-white shadow-lg rounded-lg p-5 flex flex-col justify-center items-center text-center backface-hidden">
+                  <h3 className="text-xl font-bold font-merriweather text-orange-800">
+                    {story.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">{story.title}</p>
+                  <p className="mt-3 text-sm italic">&ldquo;{story.before}&rdquo;</p>
+                  <span className="mt-3 text-orange-600 font-bold">
+                    Tap to See Transformation
+                  </span>
                 </div>
-                <h3 className="text-xl font-bold font-merriweather mt-3">{story.name}</h3>
-                <p className="text-sm text-yellow-200 mt-1">{story.title}</p>
-                <p className="mt-3 text-sm italic">&ldquo;{story.after}&rdquo;</p>
-                <button className="mt-3 text-yellow-300 font-bold" onClick={() => toggleFlip(index)}>
-                  Tap to Flip Back
-                </button>
-              </motion.div>
-            </div>
-          </motion.div>
-        ))}
+
+                {/* Back */}
+                <div className="absolute inset-0 bg-orange-600 text-white shadow-lg rounded-lg p-5 transform rotate-y-180 backface-hidden">
+                  <div className="relative w-full h-[160px] rounded-lg overflow-hidden">
+                    <Image
+                      src={story.image}
+                      alt={story.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover rounded-lg"
+                      priority={index === 0}
+                      loading={index === 0 ? "eager" : "lazy"}
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold font-merriweather mt-3">
+                    {story.name}
+                  </h3>
+                  <p className="text-sm text-yellow-200 mt-1">{story.title}</p>
+                  <p className="mt-3 text-sm italic">&ldquo;{story.after}&rdquo;</p>
+                  <span className="mt-3 text-yellow-300 font-bold">
+                    Tap to Flip Back
+                  </span>
+                </div>
+              </div>
+            </motion.article>
+          );
+        })}
       </div>
     </section>
   );

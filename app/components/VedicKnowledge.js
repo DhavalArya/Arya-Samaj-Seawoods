@@ -168,64 +168,79 @@ export default function VaidikKnowledge() {
   const scrollRef = useRef(null);
 
   const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -350, behavior: "smooth" });
+    scrollRef.current?.scrollBy({ left: -350, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 350, behavior: "smooth" });
+    scrollRef.current?.scrollBy({ left: 350, behavior: "smooth" });
   };
 
   return (
     <motion.section
       ref={sectionRef}
+      aria-labelledby="vaidik-knowledge-heading"
       initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 1.2, ease: "easeOut" }}
       className="relative bg-gradient-to-br from-[#FDE5C7] to-[#F6D7A7] p-10 rounded-3xl shadow-lg text-gray-900 w-full max-w-6xl mx-auto text-center scroll-container"
     >
       {/* Section Title */}
-      <h2 className="text-4xl font-bold text-[#8C4A08] mb-6">📖 Hindu & Vaidik Knowledge Hub</h2>
+      <h2
+        id="vaidik-knowledge-heading"
+        className="text-4xl font-bold text-[#8C4A08] mb-6"
+      >
+        📖 Hindu & Vaidik Knowledge Hub
+      </h2>
 
       {/* Scroll Buttons */}
       <button
         onClick={scrollLeft}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-gray-800/60 text-white rounded-full hover:bg-gray-900 transition-all"
+        aria-label="Scroll left"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-gray-800/60 text-white rounded-full hover:bg-gray-900 transition-all focus:outline-none"
       >
         <FaChevronLeft size={20} />
       </button>
 
       <button
         onClick={scrollRight}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-gray-800/60 text-white rounded-full hover:bg-gray-900 transition-all"
+        aria-label="Scroll right"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-gray-800/60 text-white rounded-full hover:bg-gray-900 transition-all focus:outline-none"
       >
         <FaChevronRight size={20} />
       </button>
 
-      {/* Scrollable Card Section */}
+      {/* Scrollable Cards */}
       <div
         ref={scrollRef}
-        className="overflow-x-auto flex space-x-6 snap-x scroll-smooth p-4 scrollbar-hide"
+        className="overflow-x-auto flex space-x-6 snap-x snap-mandatory scroll-smooth p-4 scrollbar-hide"
         style={{ scrollbarWidth: "none" }}
       >
         {vaidikTopics.map((topic, index) => (
-          <motion.div
+          <motion.article
             key={index}
             className="min-w-[320px] bg-white p-6 rounded-xl shadow-md snap-center border border-orange-300 flex flex-col items-center justify-center"
             whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+            tabIndex={0} // Makes cards keyboard focusable
+            aria-label={`${topic.title} - ${topic.description}`}
           >
-            <h3 className="text-2xl font-semibold text-orange-800">{topic.icon} {topic.title}</h3>
-            <p className="text-gray-700 mt-2">{topic.description}</p>
+            <h3 className="text-2xl font-semibold text-orange-800 mb-2">
+              <span aria-hidden="true">{topic.icon} </span>
+              {topic.title}
+            </h3>
+            <p className="text-gray-700">{topic.description}</p>
             {topic.link && (
               <a
                 href={topic.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 px-4 py-2 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition-all shadow-md"
+                className="mt-4 px-4 py-2 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition-all shadow-md inline-block"
+                aria-label={`Open link to ${topic.title}`}
               >
-                {topic.title.includes("Downloadable") ? "📥 Download" : "🔗 View"}
+                {topic.title.toLowerCase().includes("download") ? "📥 Download" : "🔗 View"}
               </a>
             )}
-          </motion.div>
+          </motion.article>
         ))}
       </div>
     </motion.section>

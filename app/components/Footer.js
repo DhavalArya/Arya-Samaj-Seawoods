@@ -1,9 +1,9 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
   // Did You Know? Facts
-  const didYouKnowFacts = [
+  const DID_YOU_KNOW_FACTS = [
     "Over 75% of Indian freedom fighters were influenced by Arya Samaj principles.",
     "Bhagat Singh was inspired by Maharshi Dayanand Saraswati’s Satyarth Prakash.",
     "Lala Lajpat Rai, an Arya Samaji, was called ‘Punjab Kesari’ for his role in India’s freedom struggle.",
@@ -38,7 +38,7 @@ import { useState, useEffect, useMemo } from "react";
   
 
   // Vaidik Riddles
-  const vaidikRiddles = [
+  const VAIDIK_RIDDLES = [
     { riddle: "I exist beyond time, yet I am within you. Who am I?", answer: "The Atman (Soul) - Upanishads" },
     { riddle: "What moves faster than the wind but is never seen?", answer: "The Mind - Bhagavad Gita (6.6)" },
     { riddle: "What gets smaller the more you use it, yet its impact increases?", answer: "Knowledge - Rigveda" },
@@ -71,17 +71,15 @@ import { useState, useEffect, useMemo } from "react";
   ];
 
 export default function Footer() {
-  // Memoize arrays to prevent unnecessary re-renders
-  const memoizedFacts = useMemo(() => didYouKnowFacts, []);
-  const memoizedRiddles = useMemo(() => vaidikRiddles, []);
-
   const [didYouKnow, setDidYouKnow] = useState("");
-  const [vaidikRiddle, setVaidikRiddle] = useState({ question: "", answer: "" });
+  const [vaidikRiddle, setVaidikRiddle] = useState({ riddle: "", answer: "" });
+
+  const pickRandom = useCallback((arr) => arr[Math.floor(Math.random() * arr.length)], []);
 
   useEffect(() => {
-    setDidYouKnow(memoizedFacts[Math.floor(Math.random() * memoizedFacts.length)]);
-    setVaidikRiddle(memoizedRiddles[Math.floor(Math.random() * memoizedRiddles.length)]);
-  }, [memoizedFacts, memoizedRiddles]);
+    setDidYouKnow(pickRandom(DID_YOU_KNOW_FACTS));
+    setVaidikRiddle(pickRandom(VAIDIK_RIDDLES));
+  }, [pickRandom]);
 
   return (
     <footer className="w-full bg-gradient-to-r from-yellow-600 to-orange-500 text-white py-10 shadow-lg rounded-t-[40px]">
@@ -98,7 +96,7 @@ export default function Footer() {
         {/* 📜 Did You Know & Vaidik Riddle */}
         <div>
           <h2 className="text-xl font-bold font-merriweather mb-3">📜 Did You Know?</h2>
-          <p className="text-sm italic">{"\"" + didYouKnow + "\""}</p>
+          <p className="text-sm italic">"{didYouKnow}"</p>
 
           <h2 className="text-xl font-bold font-merriweather mt-4">🤔 Vaidik Riddle</h2>
           <p className="text-sm">{vaidikRiddle.riddle}</p>
@@ -109,23 +107,20 @@ export default function Footer() {
         <div className="text-center bg-gradient-to-br from-orange-100 via-pink-50 to-yellow-100 p-4 rounded-xl shadow-lg border border-orange-200">
           <h2 className="text-2xl font-bold font-merriweather text-orange-700 mb-2">🙏 Quick Donate</h2>
 
-          {/* Highlighted 80G Info */}
+          {/* 80G Info */}
           <div className="flex justify-center items-center gap-2 text-green-800 text-sm font-semibold mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9V7a1 1 0 112 0v2a1 1 0 11-2 0zm1 4a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
             </svg>
-            <p>Your contribution is tax exempt under Section 80G of the Income Tax Act.</p>
+            <span>Your contribution is tax exempt under Section 80G of the Income Tax Act.</span>
           </div>
 
-          {/* Optional CTA line */}
-          <p className="text-xs text-gray-600 italic mb-2">
-            Support Arya Samaj’s selfless seva initiatives 🙏
-          </p>
+          <p className="text-xs text-gray-600 italic mb-2">Support Arya Samaj’s selfless seva initiatives 🙏</p>
 
           {/* QR Image */}
           <Image
             src="/images/donation-qr.jpg"
-            alt="Donation QR"
+            alt="Donation QR Code"
             width={120}
             height={120}
             className="mx-auto rounded-lg shadow-md"
@@ -133,10 +128,9 @@ export default function Footer() {
 
           <p className="text-sm mt-2 text-gray-700 font-medium">Scan to Donate</p>
         </div>
-
       </div>
 
-      {/* 📍 Google Maps Section with Exact Location */}
+      {/* 📍 Map */}
       <div className="mt-8 text-center">
         <h2 className="text-xl font-bold font-merriweather mb-3">📍 Arya Samaj Seawoods</h2>
         <div className="w-full flex justify-center">
@@ -145,12 +139,13 @@ export default function Footer() {
             width="100%"
             height="250"
             className="rounded-lg shadow-md"
-            allowFullScreen=""
+            allowFullScreen
             loading="lazy"
-          ></iframe>
+            title="Arya Samaj Seawoods Location"
+          />
         </div>
         <a
-          href="https://www.google.com/maps/place/Arya+Samaj+Nerul/@19.008884,73.013846,15z/data=!4m6!3m5!1s0x3be7c360d9572cc7:0x88c5b6edd21c2b2!8m2!3d19.008884!4d73.013846!16s%2Fg%2F11b6j8yw6h?entry=ttu"
+          href="https://www.google.com/maps/place/Arya+Samaj+Nerul/@19.008884,73.013846,15z"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-3 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md"
@@ -159,14 +154,9 @@ export default function Footer() {
         </a>
       </div>
 
-      {/* 🌍 Social Media Links */}
+      {/* 🌍 Footer Note */}
       <div className="mt-6 text-center text-sm font-light">
         <p>© {new Date().getFullYear()} Arya Samaj - Seawoods. All rights reserved.</p>
-        {/* <p className="mt-2">
-          <a href="#" className="mx-2 hover:underline">Facebook</a> |
-          <a href="#" className="mx-2 hover:underline">Instagram</a> |
-          <a href="#" className="mx-2 hover:underline">Twitter</a>
-        </p> */}
       </div>
     </footer>
   );

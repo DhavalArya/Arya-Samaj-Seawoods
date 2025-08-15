@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Head from "next/head";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -57,54 +58,91 @@ export default function Hero({ setShowForm }) {
   }, [quotes.length]);
 
   return (
-    <section className="relative w-full text-center pt-[140px] pb-16 bg-vedic-pattern text-white rounded-b-[80px] shadow-lg mt-[120px]">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/images/vedic-bg.webp"
-          alt="Vaidik Background"
-          layout="fill"
-          objectFit="cover"
-          className="opacity-40 transition-opacity duration-1000"
+    <>
+      {/* SEO Meta & Structured Data */}
+      <Head>
+        <title>Arya Samaj Seawoods | Vedic Principles & Social Service</title>
+        <meta
+          name="description"
+          content="Arya Samaj Seawoods is dedicated to spreading Vedic wisdom, truth, and social service through community events, education, and cultural initiatives."
         />
-      </div>
+        <meta
+          name="keywords"
+          content="Arya Samaj, Seawoods, Vedic teachings, truth, social service, community, Sanskrit quotes"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Arya Samaj Seawoods",
+              url: "https://yourdomain.com",
+              logo: "https://yourdomain.com/images/arya-samaj-logo.jpg",
+              sameAs: [
+                "https://www.facebook.com/aryasamajseawoods",
+                "https://twitter.com/yourhandle"
+              ]
+            })
+          }}
+        />
+      </Head>
 
-      {/* Main Content */}
-      <motion.div
-        className="relative z-10 text-center"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.5 }}
+      <section
+        className="relative w-full text-center pt-[140px] pb-16 bg-vedic-pattern text-white rounded-b-[80px] shadow-lg mt-[120px]"
+        aria-label="Hero section with rotating inspirational quotes from Arya Samaj Seawoods"
       >
-        <h1 className="text-5xl font-bold font-merriweather drop-shadow-lg">
-          Welcome to Arya Samaj - Seawoods
-        </h1>
-        <p className="mt-3 text-xl font-noto-serif text-[#5b2c06]">
-          &quot;सत्यं वद। धर्मं चर।&quot;
-        </p>
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0" aria-hidden="true">
+          <Image
+            src="/images/vedic-bg.webp"
+            alt=""
+            fill
+            className="opacity-40 transition-opacity duration-1000 object-cover"
+            priority
+          />
+        </div>
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          className="mt-6 px-6 py-3 bg-orange-600 hover:bg-orange-700 transition rounded-full text-white font-semibold shadow-lg"
-          onClick={() => setShowForm(true)}
+        {/* Main Content */}
+        <motion.div
+          className="relative z-10 text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.5 }}
         >
-          Join the Movement
-        </motion.button>
+          <h1 className="text-5xl font-bold font-merriweather drop-shadow-lg">
+            Welcome to Arya Samaj Seawoods
+          </h1>
+          <h2 className="mt-3 text-xl font-noto-serif text-[#5b2c06]" lang="sa">
+            &quot;सत्यं वद। धर्मं चर।&quot;
+          </h2>
 
-        {/* Rotating Quotes */}
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={currentQuote}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 1 }}
-            className="mt-6 text-xl font-medium italic text-[#a06a40]"
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            className="mt-6 px-6 py-3 bg-orange-600 hover:bg-orange-700 transition rounded-full text-white font-semibold shadow-lg"
+            onClick={() => setShowForm(true)}
+            aria-label="Join Arya Samaj Seawoods movement"
           >
-            {quotes[currentQuote]}
-          </motion.p>
-        </AnimatePresence>
-      </motion.div>
-    </section>
+            Join the Movement
+          </motion.button>
+
+          {/* Rotating Quotes — first quote is already in HTML for SEO */}
+          <div className="mt-6 text-xl font-medium italic text-[#a06a40]">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentQuote}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 1 }}
+                lang={/[\u0900-\u097F]/.test(quotes[currentQuote]) ? "sa" : "en"}
+              >
+                {quotes[currentQuote]}
+              </motion.p>
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      </section>
+    </>
   );
 }

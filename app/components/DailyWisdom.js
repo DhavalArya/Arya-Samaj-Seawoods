@@ -1,6 +1,16 @@
 "use client";
-import { useState } from "react";
-import { FaWhatsapp, FaXTwitter, FaInstagram, FaFacebook, FaLinkedin, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import {
+  FaWhatsapp,
+  FaXTwitter,
+  FaInstagram,
+  FaFacebook,
+  FaLinkedin,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa6";
+
+const siteUrl = "https://aryasamajseawoods.co.in";
 
 const quotes = [
   { 
@@ -172,153 +182,230 @@ const quotes = [
 
 export default function DailyWisdom() {
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-  
-  // Commented Audio Feature (Can be enabled later)
-  // const [audio, setAudio] = useState(new Audio(quotes[currentQuoteIndex].audio));
+  const regionRef = useRef(null);
 
-  // const playAudio = () => {
-  //   if (audio) {
-  //     audio.play();
-  //   }
-  // };
+  const current = useMemo(() => quotes[currentQuoteIndex], [currentQuoteIndex]);
+
+  const todayString = useMemo(
+    () =>
+      new Date().toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+    []
+  );
+
+  // Keyboard support: ← and → to navigate
+  const onKeyDown = useCallback(
+    (e) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setCurrentQuoteIndex(
+          (prevIndex) => (prevIndex - 1 + quotes.length) % quotes.length
+        );
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % quotes.length);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    const el = regionRef.current;
+    if (!el) return;
+    el.addEventListener("keydown", onKeyDown);
+    return () => el.removeEventListener("keydown", onKeyDown);
+  }, [onKeyDown]);
 
   const getEnrichedMessage = () => {
-    const quote = quotes[currentQuoteIndex];
-    const today = new Date().toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    return `🕉️ Vaidic Wisdom for ${todayString} 🕉️
 
-    return `🕉️ Vaidic Wisdom for ${today} 🕉️
+📜 Shloka:
+${current.text}
 
-    📜 Shloka:
-    ${quote.text}
+💬 Meaning:
+"${current.meaning}"
 
-    💬 Meaning:
-    "${quote.meaning}"
+🧘‍♂️ Source: ${current.source}
 
-    🧘‍♂️ Source: ${quote.source}
+🔸 Shared via Arya Samaj Seawoods
+🌐 ${siteUrl}
+📞 +91-9223344556, +91-9323022055
+📧 aryasamajseawoods@gmail.com
+📍 https://maps.app.goo.gl/QQUvD9oD1yWA9ps8A
 
-    🔸 Shared via Arya Samaj Seawoods
-    🌐 https://aryasamajseawoods.co.in
-    📞 +91-9223344556, +91-9323022055
-    📧 aryasamajseawoods@gmail.com
-    📍 https://maps.app.goo.gl/QQUvD9oD1yWA9ps8A
+#VedicWisdom #AryaSamaj #SanatanDharma #Seawoods
 
-    🕯️ Embrace Vaidic values. Share knowledge. Inspire others.`;
+🕯️ Embrace Vaidic values. Share knowledge. Inspire others.`;
   };
 
+  const openNew = (url) => window.open(url, "_blank", "noopener,noreferrer");
+
   const shareOnWhatsApp = () => {
-    const message = getEnrichedMessage();
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      getEnrichedMessage()
+    )}`;
+    openNew(url);
   };
 
   const shareOnX = () => {
-    const message = getEnrichedMessage();
-    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
+    const text = `${current.text}\n\n"${current.meaning}" — ${current.source}\n${siteUrl}\n#VedicWisdom #AryaSamaj`;
+    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    openNew(url);
   };
 
-  const shareOnInstagram = () => {
+  const shareByCopyThenOpen = (destUrl, copiedLabel) => {
     const message = getEnrichedMessage();
-    navigator.clipboard.writeText(message).then(() => {
-      alert("Quote copied to clipboard! Open Instagram and paste it into your post or story.");
-      window.open("https://www.instagram.com/", "_blank");
-    });
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(message)
+        .then(() => {
+          alert(`${copiedLabel} copied! Paste it into your post.`);
+          openNew(destUrl);
+        })
+        .catch(() => openNew(destUrl));
+    } else {
+      // Fallback if Clipboard API not available
+      openNew(destUrl);
+    }
   };
 
-  const shareOnFacebook = () => {
-    const message = getEnrichedMessage();
-    navigator.clipboard.writeText(message).then(() => {
-      alert("Shloka copied to clipboard! Open Facebook and paste it into your post.");
-      window.open("https://www.facebook.com/", "_blank");
-    });
-  };
+  const shareOnInstagram = () =>
+    shareByCopyThenOpen("https://www.instagram.com/", "Quote");
 
-  const shareOnLinkedIn = () => {
-    const message = getEnrichedMessage();
-    navigator.clipboard.writeText(message).then(() => {
-      alert("Shloka copied to clipboard! Open LinkedIn and paste it into your post.");
-      window.open("https://www.linkedin.com/", "_blank");
-    });
-  };
+  const shareOnFacebook = () =>
+    shareByCopyThenOpen("https://www.facebook.com/", "Shloka");
 
-  const nextQuote = () => {
+  const shareOnLinkedIn = () =>
+    shareByCopyThenOpen("https://www.linkedin.com/", "Shloka");
+
+  const nextQuote = () =>
     setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % quotes.length);
-  };
 
-  const prevQuote = () => {
+  const prevQuote = () =>
     setCurrentQuoteIndex((prevIndex) => (prevIndex - 1 + quotes.length) % quotes.length);
+
+  // JSON-LD for SEO (Quotation)
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Quotation",
+    text: current.text,
+    inLanguage: "sa", // Sanskrit
+    translationOfWork: {
+      "@type": "CreativeWork",
+      inLanguage: "en",
+      description: current.meaning,
+    },
+    citation: current.source,
+    publisher: {
+      "@type": "Organization",
+      name: "Arya Samaj Seawoods",
+      url: siteUrl,
+    },
+    datePublished: new Date().toISOString().split("T")[0],
   };
 
   return (
-    <section className="relative bg-yellow-100 text-gray-900 rounded-lg shadow-lg p-6 mx-auto w-3/4 md:w-2/3 lg:w-1/2">
+    <section
+      ref={regionRef}
+      role="region"
+      aria-labelledby="daily-wisdom-heading"
+      tabIndex={0}
+      className="relative bg-yellow-100 text-gray-900 rounded-lg shadow-lg p-6 mx-auto w-11/12 sm:w-5/6 md:w-2/3 lg:w-1/2 outline-none"
+    >
+      {/* SEO: Structured data */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-orange-700 mb-2 flex justify-center items-center">
+        <h2
+          id="daily-wisdom-heading"
+          className="text-2xl font-bold text-orange-700 mb-2 flex justify-center items-center"
+        >
           📖 Daily Vaidik Wisdom
         </h2>
-        <p className="text-3xl font-sans text-gray-800 font-semibold mb-2">{quotes[currentQuoteIndex].text}</p>
-        <p className="text-lg text-gray-600 italic">{`"${quotes[currentQuoteIndex].meaning}"`}</p>
-        <p className="text-sm text-gray-500 mt-2">- {quotes[currentQuoteIndex].source}</p>
+
+        <article aria-label="Today’s Vaidik quote" className="mt-2">
+          <blockquote className="mb-2">
+            <p className="text-2xl sm:text-3xl font-sans text-gray-800 font-semibold leading-snug">
+              {current.text}
+            </p>
+          </blockquote>
+          <p className="text-base sm:text-lg text-gray-700 italic">
+            “{current.meaning}”
+          </p>
+          <footer className="text-sm text-gray-600 mt-2">
+            <cite title="Scriptural source">{current.source}</cite>
+          </footer>
+        </article>
+
+        <p className="mt-3 text-xs text-gray-500" aria-hidden="true">
+          Use ← / → keys to browse quotes
+        </p>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-center items-center gap-4 mt-4">
-        <button 
-          onClick={prevQuote} 
-          className="p-2 rounded-full bg-orange-300 hover:bg-orange-500 transition"
+      <div className="flex justify-center items-center gap-3 sm:gap-4 mt-4">
+        <button
+          onClick={prevQuote}
+          aria-label="Previous quote"
+          title="Previous quote"
+          className="p-2 rounded-full bg-orange-300 hover:bg-orange-500 transition focus:ring-2 focus:ring-orange-600"
         >
           <FaChevronLeft size={20} />
         </button>
 
-        {/* Commented Audio Button */}
-        {/* <button 
-          onClick={playAudio} 
-          className="p-2 rounded-full bg-orange-500 text-white hover:bg-orange-600 transition"
-        >
-          <FaVolumeUp size={20} />
-        </button> */}
-
-        <button 
-          onClick={shareOnWhatsApp} 
-          className="p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition"
+        <button
+          onClick={shareOnWhatsApp}
+          aria-label="Share on WhatsApp"
+          title="Share on WhatsApp"
+          className="p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition focus:ring-2 focus:ring-green-700"
         >
           <FaWhatsapp size={20} />
         </button>
 
-        <button 
-          onClick={shareOnX} 
-          className="p-2 rounded-full bg-black text-white hover:bg-gray-800 transition"
+        <button
+          onClick={shareOnX}
+          aria-label="Share on X (Twitter)"
+          title="Share on X (Twitter)"
+          className="p-2 rounded-full bg-black text-white hover:bg-gray-800 transition focus:ring-2 focus:ring-black"
         >
           <FaXTwitter size={20} />
         </button>
 
-        <button 
-          onClick={shareOnInstagram} 
-          className="p-2 rounded-full bg-pink-500 text-white hover:bg-pink-600 transition"
+        <button
+          onClick={shareOnInstagram}
+          aria-label="Copy & open Instagram"
+          title="Copy & open Instagram"
+          className="p-2 rounded-full bg-pink-500 text-white hover:bg-pink-600 transition focus:ring-2 focus:ring-pink-700"
         >
           <FaInstagram size={20} />
         </button>
 
         <button
           onClick={shareOnFacebook}
-          className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
+          aria-label="Copy & open Facebook"
+          title="Copy & open Facebook"
+          className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition focus:ring-2 focus:ring-blue-800"
         >
           <FaFacebook size={20} />
         </button>
 
         <button
           onClick={shareOnLinkedIn}
-          className="p-2 rounded-full bg-blue-800 text-white hover:bg-blue-900 transition"
+          aria-label="Copy & open LinkedIn"
+          title="Copy & open LinkedIn"
+          className="p-2 rounded-full bg-blue-800 text-white hover:bg-blue-900 transition focus:ring-2 focus:ring-blue-900"
         >
           <FaLinkedin size={20} />
         </button>
 
-        <button 
-          onClick={nextQuote} 
-          className="p-2 rounded-full bg-orange-300 hover:bg-orange-500 transition"
+        <button
+          onClick={nextQuote}
+          aria-label="Next quote"
+          title="Next quote"
+          className="p-2 rounded-full bg-orange-300 hover:bg-orange-500 transition focus:ring-2 focus:ring-orange-600"
         >
           <FaChevronRight size={20} />
         </button>

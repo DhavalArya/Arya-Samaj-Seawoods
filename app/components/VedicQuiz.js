@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { FaFire, FaShareAlt } from "react-icons/fa";
 
@@ -327,127 +327,197 @@ const quizData = {
 };
 
 export default function VaidikQuiz() {
+  // States
   const [level, setLevel] = useState("easy");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [score, setScore] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
   const [streak, setStreak] = useState(0);
-  const [pastattempts, setPastattempts] = useState([]);
+  const [pastAttempts, setPastAttempts] = useState([]);
 
-  // Load Streak & Pastattempts from LocalStorage
+  // Memoized current quiz questions
+  const currentQuiz = useMemo(() => quizData[level] || [], [level]);
+
+  // Load streak and pastAttempts from localStorage once
   useEffect(() => {
-    const savedStreak = localStorage.getItem("vaidikStreak") || 0;
-    setStreak(parseInt(savedStreak));
+    const savedStreak = parseInt(localStorage.getItem("vaidikStreak")) || 0;
+    setStreak(savedStreak);
 
-    const savedPastattempts = JSON.parse(localStorage.getItem("vaidikPastattempts")) || [];
-    setPastattempts(savedPastattempts);
+    const savedPastAttempts = JSON.parse(localStorage.getItem("vaidikPastAttempts")) || [];
+    setPastAttempts(savedPastAttempts);
   }, []);
 
-  // Handle Answer Selection
-  const handleAnswer = (option) => {
-    setSelectedAnswer(option);
+  // Save streak and pastAttempts to localStorage only when these change
+  useEffect(() => {
+    localStorage.setItem("vaidikStreak", streak.toString());
+  }, [streak]);
 
-    setTimeout(() => {
-      let newScore = score;
-      if (option === quizData[level][currentQuestion].answer) {
-        newScore++;
-        setScore(newScore);
+  useEffect(() => {
+    localStorage.setItem("vaidikPastAttempts", JSON.stringify(pastAttempts));
+  }, [pastAttempts]);
+
+  // Reset quiz whenever level changes
+  useEffect(() => {
+    resetQuiz();
+  }, [level]);
+
+  // Handler for selecting answer
+  const handleAnswer = useCallback(
+    (option) => {
+      if (selectedAnswer !== null) return; // Prevent multiple clicks
+
+      setSelectedAnswer(option);
+
+      const correctAnswer = currentQuiz[currentQuestion]?.answer;
+
+      const isCorrect = option === correctAnswer;
+      if (isCorrect) {
+        setScore((prev) => prev + 1);
       }
 
-      if (currentQuestion + 1 < quizData[level].length) {
-        setCurrentQuestion(currentQuestion + 1);
-        setSelectedAnswer(null);
-      } else {
-        setQuizFinished(true);
+      setTimeout(() => {
+        if (currentQuestion + 1 < currentQuiz.length) {
+          setCurrentQuestion((prev) => prev + 1);
+          setSelectedAnswer(null);
+        } else {
+          // Quiz finished
+          setQuizFinished(true);
+          setStreak((prev) => prev + 1);
+          setPastAttempts((prev) => [
+            ...prev,
+            { score: isCorrect ? score + 1 : score, date: new Date().toLocaleDateString() },
+          ]);
+        }
+      }, 1500);
+    },
+    [currentQuestion, currentQuiz, selectedAnswer, score]
+  );
 
-        // Save Streak
-        setStreak(streak + 1);
-        localStorage.setItem("vaidikStreak", streak + 1);
-
-        // Save Pastattempts Locally
-        const newPastattempts = [...pastattempts, { score: newScore, date: new Date().toLocaleDateString() }];
-        setPastattempts(newPastattempts);
-        localStorage.setItem("vaidikPastattempts", JSON.stringify(newPastattempts));
-      }
-    }, 1500);
-  };
-
-  // Restart Quiz
-  const handleRestart = () => {
+  // Restart quiz helper
+  const resetQuiz = useCallback(() => {
     setCurrentQuestion(0);
     setSelectedAnswer(null);
     setScore(0);
     setQuizFinished(false);
-  };
+  }, []);
 
-  // Share Quiz Link
-  const handleShare = () => {
-    const shareUrl = "https://aryasamajseawoods.co.in" + "/#VaidikQuiz"; // TODO: Replace with actual URL
-    navigator.clipboard.writeText(shareUrl);
-    alert("Quiz link copied! Share with friends.");
-  };
+  // Handle restart button
+  const handleRestart = useCallback(() => {
+    resetQuiz();
+  }, [resetQuiz]);
+
+  // Handle share button
+  const handleShare = useCallback(() => {
+    const shareUrl = "https://aryasamajseawoods.co.in/#VaidikQuiz"; // Replace as needed
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert("Quiz link copied! Share with friends.");
+    });
+  }, []);
+
+  // Disable level buttons during quiz to prevent mid-quiz level change issues
+  const levelButtonsDisabled = !quizFinished && currentQuestion > 0;
 
   return (
-    <section className="bg-orange-100 p-6 rounded-xl shadow-lg max-w-4xl mx-auto mt-10 text-center">
-      <h2 className="text-3xl font-bold text-orange-700 flex justify-center items-center gap-2">
-        🕉️ Vaidik Knowledge Quiz {streak > 0 && <FaFire className="text-red-500 animate-pulse" />}
+    <section className="bg-orange-100 p-6 rounded-xl shadow-lg max-w-4xl mx-auto mt-10 text-center select-none">
+      <h2 className="text-3xl font-bold text-orange-700 flex justify-center items-center gap-2" aria-label="Vaidik Knowledge Quiz Title">
+        🕉️ Vaidik Knowledge Quiz{" "}
+        {streak > 0 && <FaFire className="text-red-500 animate-pulse" aria-label="Fire icon indicating streak" />}
       </h2>
-      <p className="text-gray-700 mt-2">🔥 Streak: {streak} attempts</p>
+      <p className="text-gray-700 mt-2" aria-live="polite">
+        🔥 Streak: {streak} attempt{streak !== 1 ? "s" : ""}
+      </p>
 
       {/* Level Selection */}
-      <div className="flex justify-center gap-3 mt-3">
+      <div className="flex justify-center gap-3 mt-3" role="radiogroup" aria-label="Select quiz difficulty level">
         {["easy", "medium", "hard"].map((lvl) => (
           <button
             key={lvl}
-            onClick={() => setLevel(lvl)}
-            className={`px-4 py-2 rounded-lg text-white font-semibold ${
+            onClick={() => !levelButtonsDisabled && setLevel(lvl)}
+            className={`px-4 py-2 rounded-lg text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-700 ${
               level === lvl ? "bg-orange-700" : "bg-gray-400"
-            }`}
+            } ${levelButtonsDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-orange-600"}`}
+            aria-checked={level === lvl}
+            role="radio"
+            disabled={levelButtonsDisabled}
+            tabIndex={level === lvl ? 0 : -1}
           >
             {lvl.toUpperCase()}
           </button>
         ))}
       </div>
 
-      {!quizFinished ? (
+      {currentQuiz.length === 0 ? (
+        <p className="mt-6 text-red-600 font-semibold">No questions available for this level.</p>
+      ) : !quizFinished ? (
         <>
-          <h3 className="text-lg font-semibold mt-6">{quizData[level][currentQuestion].question}</h3>
+          <h3
+            className="text-lg font-semibold mt-6"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-relevant="additions"
+          >
+            {currentQuiz[currentQuestion].question}
+          </h3>
 
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            {quizData[level][currentQuestion].options.map((option, index) => (
-              <motion.button
-                key={index}
-                className={`py-3 rounded-lg text-white font-semibold transition-all ${
-                  selectedAnswer
-                    ? option === quizData[level][currentQuestion].answer
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                    : "bg-orange-500 hover:bg-orange-600"
-                }`}
-                disabled={selectedAnswer}
-                onClick={() => handleAnswer(option)}
-                whileTap={{ scale: 0.9 }}
-              >
-                {option}
-              </motion.button>
-            ))}
+          <div className="grid grid-cols-2 gap-4 mt-4" role="list" aria-label="Answer options">
+            {currentQuiz[currentQuestion].options.map((option, index) => {
+              const isSelected = selectedAnswer === option;
+              const isCorrectAnswer = option === currentQuiz[currentQuestion].answer;
+
+              // Show green for correct, red for wrong only after selection
+              let btnClass = "bg-orange-500 hover:bg-orange-600";
+              if (selectedAnswer) {
+                if (isCorrectAnswer) btnClass = "bg-green-500";
+                else if (isSelected) btnClass = "bg-red-500";
+                else btnClass = "bg-gray-400 cursor-not-allowed";
+              }
+
+              return (
+                <motion.button
+                  key={index}
+                  className={`py-3 rounded-lg text-white font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-700 ${btnClass}`}
+                  disabled={!!selectedAnswer}
+                  onClick={() => handleAnswer(option)}
+                  whileTap={{ scale: 0.9 }}
+                  role="listitem"
+                  aria-pressed={isSelected}
+                  tabIndex={selectedAnswer ? -1 : 0}
+                >
+                  {option}
+                </motion.button>
+              );
+            })}
           </div>
 
           {selectedAnswer && (
-            <p className="text-sm text-gray-700 mt-2 italic">
-              📖 {quizData[level][currentQuestion].explanation}
+            <p
+              className="text-sm text-gray-700 mt-2 italic"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              📖 {currentQuiz[currentQuestion].explanation}
             </p>
           )}
         </>
       ) : (
         <>
-          <h3 className="text-lg font-semibold mt-6">🎉 Quiz Completed! Your Score: {score}/{quizData[level].length}</h3>
-          
-          {/* Pastattempts Display */}
-          <h4 className="text-lg font-semibold mt-4">🏆 Pastattempts</h4>
-          <ul className="bg-gray-200 p-4 rounded-lg max-w-md mx-auto text-left">
-            {pastattempts
+          <h3
+            className="text-lg font-semibold mt-6"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            🎉 Quiz Completed! Your Score: {score}/{currentQuiz.length}
+          </h3>
+
+          {/* Past Attempts Display */}
+          <h4 className="text-lg font-semibold mt-4">🏆 Past Attempts</h4>
+          <ul
+            className="bg-gray-200 p-4 rounded-lg max-w-md mx-auto text-left"
+            aria-label="Past quiz attempts"
+          >
+            {pastAttempts
+              .slice()
               .sort((a, b) => b.score - a.score)
               .slice(0, 5)
               .map((entry, index) => (
@@ -460,12 +530,21 @@ export default function VaidikQuiz() {
           </ul>
 
           {/* Restart & Share */}
-          <button onClick={handleRestart} className="bg-blue-600 text-white px-4 py-2 mt-2 rounded-lg">
-            Restart Quiz
-          </button>
-          <button onClick={handleShare} className="bg-green-600 text-white px-4 py-2 mt-2 rounded-lg ml-2">
-            <FaShareAlt /> Share
-          </button>
+          <div className="mt-4 flex justify-center gap-3">
+            <button
+              onClick={handleRestart}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
+            >
+              Restart Quiz
+            </button>
+            <button
+              onClick={handleShare}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-700"
+            >
+              <FaShareAlt aria-hidden="true" />
+              Share
+            </button>
+          </div>
         </>
       )}
     </section>

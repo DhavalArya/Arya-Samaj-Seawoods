@@ -8,22 +8,26 @@ export default function Slideshow() {
   const [slides, setSlides] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 🔄 Fetch slides.json dynamically on mount
+  // Fetch slide data from public/slides.json
   useEffect(() => {
+    let isMounted = true;
     const fetchSlides = async () => {
       try {
         const res = await fetch("/slides.json");
         const data = await res.json();
-        setSlides(data);
+        if (isMounted) setSlides(data);
       } catch (err) {
         console.error("Failed to load slides:", err);
       }
     };
 
     fetchSlides();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // ⏰ Auto slide change every 5s
+  // Auto-slide every 5 seconds
   useEffect(() => {
     if (slides.length === 0) return;
     const interval = setInterval(() => {
@@ -32,56 +36,62 @@ export default function Slideshow() {
     return () => clearInterval(interval);
   }, [slides]);
 
-  const nextSlide = () => {
+  const nextSlide = () =>
     setCurrentIndex((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
+  const prevSlide = () =>
     setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
+  const goToSlide = (index) => setCurrentIndex(index);
 
   if (slides.length === 0) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex justify-center items-center h-[60vh]"
+      >
         <p className="text-xl font-semibold text-gray-700">Loading slides...</p>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh] overflow-hidden rounded-2xl shadow-2xl z-20">
-      {/* Left Arrow */}
+    <section
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Image Slideshow"
+      className="relative w-full h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh] overflow-hidden rounded-2xl shadow-2xl z-20"
+    >
+      {/* Previous Slide Button */}
       <button
         onClick={prevSlide}
-        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-gray-800/60 text-white p-3 rounded-full z-30 hover:scale-110 transition-all"
+        aria-label="Previous Slide"
+        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-gray-800/60 text-white p-3 rounded-full z-30 hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-white"
       >
         <FaChevronLeft size={24} />
       </button>
 
-      {/* Slides Preloaded with Opacity Transitions */}
+      {/* Slides */}
       <div className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden">
         {slides.map((slide, index) => (
           <motion.div
             key={index}
             className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-              index === currentIndex ? "opacity-100" : "opacity-0"
+              index === currentIndex ? "opacity-100 z-20" : "opacity-0 z-10"
             }`}
+            aria-hidden={index !== currentIndex}
           >
             <Image
               src={slide.src}
-              alt={slide.caption}
+              alt={slide.alt || slide.caption || `Slide ${index + 1}`}
               width={slide.width}
               height={slide.height}
               className="w-full h-full object-cover rounded-2xl"
+              priority={index === 0}
+              loading={index === 0 ? "eager" : "lazy"}
               placeholder="empty"
-              // blurDataURL="/images/placeholder.jpg" // create a tiny placeholder in /public/images
             />
 
-            {/* Caption Overlay */}
+            {/* Slide Caption */}
             {index === currentIndex && (
               <motion.div
                 className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-black/60 text-white text-xl font-semibold px-6 py-3 rounded-lg shadow-lg"
@@ -96,28 +106,36 @@ export default function Slideshow() {
         ))}
       </div>
 
-      {/* Right Arrow */}
+      {/* Next Slide Button */}
       <button
         onClick={nextSlide}
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-gray-800/60 text-white p-3 rounded-full z-30 hover:scale-110 transition-all"
+        aria-label="Next Slide"
+        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-gray-800/60 text-white p-3 rounded-full z-30 hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-white"
       >
         <FaChevronRight size={24} />
       </button>
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-5 w-full flex justify-center space-x-4 z-30">
+      <div
+        className="absolute bottom-5 w-full flex justify-center space-x-4 z-30"
+        role="tablist"
+        aria-label="Slide navigation"
+      >
         {slides.map((_, index) => (
-          <motion.div
+          <motion.button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`cursor-pointer w-4 h-4 rounded-full transition-all duration-500 ${
+            aria-label={`Go to slide ${index + 1}`}
+            aria-selected={currentIndex === index}
+            role="tab"
+            className={`cursor-pointer w-4 h-4 rounded-full transition-all duration-500 focus:outline-none focus:ring-2 ${
               currentIndex === index
-                ? "bg-gradient-to-r from-yellow-400 to-orange-500 scale-125 shadow-lg"
+                ? "bg-gradient-to-r from-yellow-400 to-orange-500 scale-125 shadow-lg ring-white"
                 : "bg-gray-400 opacity-60"
             }`}
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 }
