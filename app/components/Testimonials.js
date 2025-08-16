@@ -119,7 +119,7 @@ export default function Testimonials() {
                     className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start text-left border border-gray-200 h-full"
                     whileHover={{ scale: 1.05 }}
                   >
-                    <p className="text-gray-700 text-sm md:text-base mb-4">&quot;"{t.feedback}&quot;"</p>
+                    <p className="text-gray-700 text-sm md:text-base mb-4">&ldquo;{t.feedback}&rdquo;</p>
                     <h3 className="text-lg md:text-xl font-semibold text-gray-900">{t.name}</h3>
                     <p className="text-sm text-gray-600">{t.role}</p>
                   </motion.div>
