@@ -1,110 +1,59 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
+// keep framer-motion if you like, but avoid on mobile
 import { motion } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
-import Head from "next/head";
 
-export default function AumChant() {
+export default function AumChant({ onClose }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
-  // Load state from localStorage
+  // restore preference, but DO NOT autoplay until user taps the button
   useEffect(() => {
-    const savedState = localStorage.getItem("aum-playing") === "true";
-    setIsPlaying(savedState);
-
-    if (savedState && audioRef.current) {
-      audioRef.current.play().catch(() => {});
-    }
-
-    const handleInteraction = () => {
-      if (savedState && !audioRef.current?.paused) return;
-      if (savedState) {
-        audioRef.current.play().catch(() => {});
-      }
-      document.removeEventListener("click", handleInteraction);
-      document.removeEventListener("touchstart", handleInteraction);
-    };
-
-    document.addEventListener("click", handleInteraction);
-    document.addEventListener("touchstart", handleInteraction);
-
-    return () => {
-      document.removeEventListener("click", handleInteraction);
-      document.removeEventListener("touchstart", handleInteraction);
-    };
+    const saved = localStorage.getItem("aum-playing") === "true";
+    if (saved) setIsPlaying(true); // reflects the intent in UI
   }, []);
 
-  const toggleAudio = () => {
-    if (!audioRef.current) return;
+  const toggle = async () => {
+    const a = audioRef.current;
+    if (!a) return;
 
     if (isPlaying) {
-      audioRef.current.pause();
+      a.pause();
+      setIsPlaying(false);
+      localStorage.setItem("aum-playing", "false");
+      onClose?.();
     } else {
-      audioRef.current.play().catch(() => {
-      });
+      try {
+        // first play will trigger the network fetch since preload="none"
+        await a.play();
+        setIsPlaying(true);
+        localStorage.setItem("aum-playing", "true");
+      } catch {
+        // some browsers may require another tap if blocked
+        setIsPlaying(false);
+      }
     }
-
-    setIsPlaying(!isPlaying);
-    localStorage.setItem("aum-playing", (!isPlaying).toString());
   };
 
   return (
-    <>
-      {/* SEO + Structured Data */}
-      <Head>
-        <meta
-          name="description"
-          content="Listen to continuous Aum Chant from Arya Samaj Seawoods — a meditative sound for inner peace and spiritual awareness."
-        />
-        <meta
-          name="keywords"
-          content="Aum chant, Om mantra, meditation audio, Arya Samaj Seawoods, spiritual music"
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "AudioObject",
-              name: "Aum Chant Meditation Audio",
-              description:
-                "A soothing Aum chant loop from Arya Samaj Seawoods for meditation, relaxation, and spiritual awareness.",
-              contentUrl: "https://yourdomain.com/audio/aum-chant.mp3",
-              encodingFormat: "audio/mp3",
-            }),
-          }}
-        />
-      </Head>
-
-      <div
-        className="fixed bottom-5 left-5 z-50"
-        role="region"
-        aria-label="Aum Chant audio player"
+    <div className="flex items-center gap-2 rounded-full bg-white/90 px-3 py-2 shadow-lg">
+      <audio
+        ref={audioRef}
+        src="/audio/aum-chant.mp3"  // place under /public/audio
+        loop
+        preload="none"             // key: don't download until play()
+        playsInline
+        aria-label="Continuous Aum Chant meditation audio"
+      />
+      <motion.button
+        onClick={toggle}
+        whileHover={{ scale: 1.05 }}
+        className={`px-3 py-1 rounded-full text-white ${isPlaying ? "bg-red-600" : "bg-green-600"}`}
+        aria-pressed={isPlaying}
+        aria-label={isPlaying ? "Stop Aum Chant" : "Play Aum Chant"}
       >
-        <motion.button
-          onClick={toggleAudio}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-full text-white shadow-lg ${
-            isPlaying ? "bg-red-600" : "bg-green-600"
-          }`}
-          whileHover={{ scale: 1.1 }}
-          aria-pressed={isPlaying}
-          aria-label={isPlaying ? "Stop Aum Chant" : "Play Aum Chant"}
-        >
-          <span aria-hidden="true">
-            {isPlaying ? "🔇 Stop Aum" : "🔊 Play Aum"}
-          </span>
-        </motion.button>
-
-        <audio
-          ref={audioRef}
-          loop
-          preload="auto"
-          aria-label="Continuous Aum Chant meditation audio"
-        >
-          <source src="/audio/aum-chant.mp3" type="audio/mp3" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-    </>
+        {isPlaying ? "✕ Stop Aum" : "▶︎ Play Aum"}
+      </motion.button>
+    </div>
   );
 }

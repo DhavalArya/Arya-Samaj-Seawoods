@@ -2,7 +2,8 @@
 import Image from "next/image";
 import Head from "next/head";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import vedicBg from "@/public/images/vedic-bg.webp";
 
 export default function Hero({ setShowForm }) {
   const quotes = [
@@ -49,13 +50,37 @@ export default function Hero({ setShowForm }) {
   ];
 
   const [currentQuote, setCurrentQuote] = useState(0);
+  const [isSmall, setIsSmall] = useState(false);
+  const [prefersReducedMotion, setPRM] = useState(false);
 
+  // media queries (client only)
   useEffect(() => {
-    const quoteInterval = setInterval(() => {
+    if (typeof window === "undefined") return;
+    const mqSmall = window.matchMedia("(max-width: 640px)");
+    const mqPRM = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => {
+      setIsSmall(mqSmall.matches);
+      setPRM(mqPRM.matches);
+    };
+    sync();
+    mqSmall.addEventListener?.("change", sync);
+    mqPRM.addEventListener?.("change", sync);
+    return () => {
+      mqSmall.removeEventListener?.("change", sync);
+      mqPRM.removeEventListener?.("change", sync);
+    };
+  }, []);
+
+  const shouldAnimate = !isSmall && !prefersReducedMotion;
+
+  // Rotate quotes only when we allow motion (saves main-thread on phones)
+  useEffect(() => {
+    if (!shouldAnimate) return;
+    const id = setInterval(() => {
       setCurrentQuote((prev) => (prev + 1) % quotes.length);
     }, 5000);
-    return () => clearInterval(quoteInterval);
-  }, [quotes.length]);
+    return () => clearInterval(id);
+  }, [shouldAnimate, quotes.length]);
 
   return (
     <>
@@ -81,70 +106,78 @@ export default function Hero({ setShowForm }) {
               logo: "https://yourdomain.com/images/arya-samaj-logo.jpg",
               sameAs: [
                 "https://www.facebook.com/aryasamajseawoods",
-                "https://twitter.com/yourhandle"
-              ]
-            })
+                "https://twitter.com/yourhandle",
+              ],
+            }),
           }}
         />
       </Head>
 
       <section
-        className="relative w-full text-center pt-[140px] pb-16 bg-vedic-pattern text-white rounded-b-[80px] shadow-lg mt-[120px]"
+        // NOTE: removed any CSS background-image class to avoid double downloads
+        className="relative w-full text-center pt-[120px] pb-14 text-white rounded-b-[60px] shadow-lg mt-[96px] sm:pt-[140px] sm:pb-16 sm:rounded-b-[80px] sm:mt-[120px]"
         aria-label="Hero section with rotating inspirational quotes from Arya Samaj Seawoods"
       >
-        {/* Background Image */}
+        {/* LCP image — prioritized & sized for phones */}
         <div className="absolute inset-0 z-0" aria-hidden="true">
           <Image
-            src="/images/vedic-bg.webp"
+            src={vedicBg}
             alt=""
             fill
-            className="opacity-40 transition-opacity duration-1000 object-cover"
             priority
+            fetchPriority="high"
+            quality={55}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
+            placeholder="blur"
+            className="object-cover opacity-40 transition-opacity duration-700"
           />
         </div>
 
-        {/* Main Content */}
-        <motion.div
-          className="relative z-10 text-center"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5 }}
-        >
-          <h1 className="text-5xl font-bold font-merriweather drop-shadow-lg">
-            Welcome to Arya Samaj Seawoods
-          </h1>
-          <h2 className="mt-3 text-xl font-noto-serif text-[#5b2c06]" lang="sa">
-            &quot;सत्यं वद। धर्मं चर।&quot;
-          </h2>
-
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className="mt-6 px-6 py-3 bg-orange-600 hover:bg-orange-700 transition rounded-full text-white font-semibold shadow-lg"
-            onClick={() => setShowForm(true)}
-            aria-label="Join Arya Samaj Seawoods movement"
+        {/* Content: animate on desktop only (mobile paints immediately) */}
+        {shouldAnimate ? (
+          <motion.div
+            className="relative z-10 text-center"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            Join the Movement
-            <br />
-            Fill the Membership Form
-          </motion.button>
-
-          {/* Rotating Quotes — first quote is already in HTML for SEO */}
-          <div className="mt-6 text-xl font-medium italic text-[#a06a40]">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={currentQuote}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 1 }}
-                lang={/[\u0900-\u097F]/.test(quotes[currentQuote]) ? "sa" : "en"}
-              >
-                {quotes[currentQuote]}
-              </motion.p>
-            </AnimatePresence>
+            <HeroContent setShowForm={setShowForm} quote={quotes[currentQuote]} />
+          </motion.div>
+        ) : (
+          <div className="relative z-10 text-center">
+            <HeroContent setShowForm={setShowForm} quote={quotes[0]} />
           </div>
-        </motion.div>
+        )}
       </section>
+    </>
+  );
+}
+
+function HeroContent({ setShowForm, quote }) {
+  return (
+    <>
+      <h1 className="text-3xl sm:text-5xl font-bold font-merriweather drop-shadow-lg">
+        Welcome to Arya Samaj Seawoods
+      </h1>
+      <h2 className="mt-3 text-lg sm:text-xl font-noto-serif text-[#5b2c06]" lang="sa">
+        &quot;सत्यं वद। धर्मं चर।&quot;
+      </h2>
+
+      {/* Keep hover animation on desktop; renders static instantly on mobile */}
+      <button
+        className="mt-6 px-6 py-3 bg-orange-600 hover:bg-orange-700 transition rounded-full text-white font-semibold shadow-lg"
+        onClick={() => setShowForm(true)}
+        aria-label="Join Arya Samaj Seawoods movement"
+      >
+        Join the Movement
+        <br />
+        Fill the Membership Form
+      </button>
+
+      {/* Quote (no fade on mobile) */}
+      <p className="mt-6 text-base sm:text-xl font-medium italic text-[#a06a40]" lang={/[\u0900-\u097F]/.test(quote) ? "sa" : "en"}>
+        {quote}
+      </p>
     </>
   );
 }

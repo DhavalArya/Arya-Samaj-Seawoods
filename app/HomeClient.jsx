@@ -8,7 +8,6 @@ import Header from "./components/Header";
 import Hero from "./components/Hero";
 import MembershipModal from "./components/MembershipModal";
 import Footer from "./components/Footer";
-// import AumChant from "./components/AumChant"; // mount on demand
 import DarkModeToggle from "./components/DarkModeToggle";
 import DeferInView from "./components/DeferInView";
 
@@ -25,7 +24,10 @@ const StoriesOfTransformation = lazy(() => import("./components/StoriesOfTransfo
 const Testimonials = dynamic(() => import("./components/Testimonials"), { ssr: false });
 const Committee = dynamic(() => import("./components/Committee"), { ssr: false });
 const VaidikQuiz = lazy(() => import("./components/VedicQuiz"));
-const DonationPopup = dynamic(() => import("./components/DonationPopup"), { ssr: false }); // defer load
+
+// 👇 lazy components that should load only on intent
+const DonationPopup = dynamic(() => import("./components/DonationPopup"), { ssr: false });
+const AumChant = dynamic(() => import("./components/AumChant"), { ssr: false });
 
 // --- tiny utilities (JS only) ---
 function useMediaQuery(query) {
@@ -36,7 +38,8 @@ function useMediaQuery(query) {
     const onChange = () => setMatch(m.matches);
     onChange();
     m.addEventListener ? m.addEventListener("change", onChange) : m.addListener(onChange);
-    return () => (m.removeEventListener ? m.removeEventListener("change", onChange) : m.removeListener(onChange));
+    return () =>
+      m.removeEventListener ? m.removeEventListener("change", onChange) : m.removeListener(onChange);
   }, [query]);
   return match;
 }
@@ -51,7 +54,10 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
   const [showForm, setShowForm] = useState(false);
+
+  // 👇 UI state for the floating actions
   const [playChant, setPlayChant] = useState(false);
+  const [donateOpen, setDonateOpen] = useState(false);
 
   const isSmall = useIsSmallScreen();
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -79,10 +85,8 @@ export default function Home() {
 
   return (
     <>
-      {/* keep third-party async */}
       <Script src="https://analytics.example.com/script.js" strategy="lazyOnload" />
 
-      {/* Skip opening animation on small screens or when motion is reduced */}
       {!(isSmall || prefersReducedMotion) && !animationFinished && (
         <OpeningAnimation onComplete={() => setAnimationFinished(true)} />
       )}
@@ -90,34 +94,102 @@ export default function Home() {
       <div className={`${isDarkMode ? "dark" : ""} relative min-h-screen overflow-hidden`}>
         <div className="layered-background" aria-hidden="true" />
 
-        {/* Aum Chant only on user intent */}
-        {/* <button onClick={() => setPlayChant(true)} className="btn">Play Aum</button>
-        {playChant && <AumChant />} */}
-
         <Header />
         <DarkModeToggle isDark={isDarkMode} toggle={() => setIsDarkMode((d) => !d)} />
         <Hero setShowForm={setShowForm} />
-        <MembershipModal showForm={showForm} setShowForm={setShowForm} onClose={() => setShowForm(false)} />
+        <MembershipModal
+          showForm={showForm}
+          setShowForm={setShowForm}
+          onClose={() => setShowForm(false)}
+        />
 
         <main className="main-content">
-          {/* heavy sections mount only when scrolled near */}
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><DailyWisdom /></Suspense></DeferInView>
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><Slideshow /></Suspense></DeferInView>
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><Events /></Suspense></DeferInView>
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><Activities /></Suspense></DeferInView>
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><VaidikKnowledge /></Suspense></DeferInView>
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><WhyAryaSamaj /></Suspense></DeferInView>
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><MissionVision /></Suspense></DeferInView>
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><StoriesOfTransformation /></Suspense></DeferInView>
-          <DeferInView><Testimonials /></DeferInView>
-          <DeferInView><Committee /></DeferInView>
-          <DeferInView><Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}><VaidikQuiz /></Suspense></DeferInView>
-
-          {/* Donation widget can be heavy; load only after scroll */}
-          <DeferInView><DonationPopup /></DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <DailyWisdom />
+            </Suspense>
+          </DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <Slideshow />
+            </Suspense>
+          </DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <Events />
+            </Suspense>
+          </DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <Activities />
+            </Suspense>
+          </DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <VaidikKnowledge />
+            </Suspense>
+          </DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <WhyAryaSamaj />
+            </Suspense>
+          </DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <MissionVision />
+            </Suspense>
+          </DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <StoriesOfTransformation />
+            </Suspense>
+          </DeferInView>
+          <DeferInView>
+            <Testimonials />
+          </DeferInView>
+          <DeferInView>
+            <Committee />
+          </DeferInView>
+          <DeferInView>
+            <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
+              <VaidikQuiz />
+            </Suspense>
+          </DeferInView>
         </main>
 
         <Footer />
+
+        {/* ===== Floating Actions ===== */}
+
+        {/* Bottom-left: Aum Chant */}
+        <div className="fixed left-3 bottom-4 z-40">
+          {!playChant ? (
+            <button
+              onClick={() => setPlayChant(true)}
+              className="rounded-full px-4 py-2 bg-green-600 text-white shadow-lg hover:bg-green-700"
+              aria-label="Open Aum chant player"
+            >
+              ▶︎ Play Aum
+            </button>
+          ) : (
+            <AumChant onClose={() => setPlayChant(false)} />
+          )}
+        </div>
+
+        {/* Bottom-right: Donate */}
+        <div className="fixed right-3 bottom-4 z-40">
+          {!donateOpen ? (
+            <button
+              onClick={() => setDonateOpen(true)}
+              className="rounded-full px-4 py-2 bg-orange-600 text-white shadow-lg hover:bg-orange-700"
+              aria-label="Open donate dialog"
+            >
+              🙏 Donate
+            </button>
+          ) : (
+            <DonationPopup onClose={() => setDonateOpen(false)} />
+          )}
+        </div>
       </div>
     </>
   );
