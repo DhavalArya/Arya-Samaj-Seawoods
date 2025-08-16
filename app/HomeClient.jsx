@@ -7,12 +7,13 @@ import Hero from "./components/Hero";
 import MembershipModal from "./components/MembershipModal";
 import Footer from "./components/Footer";
 import DonationPopup from "./components/DonationPopup";
-import AumChant from "./components/AumChant";
+// import AumChant from "./components/AumChant"; // mount on demand
 import DarkModeToggle from "./components/DarkModeToggle";
-import OpeningAnimation from "./components/OpeningAnimation";
 import dynamic from "next/dynamic";
+import DeferInView from "./components/DeferInView";
 
-// Heavy sections – dynamically imported
+// Light entry, heavy stuff deferred
+const OpeningAnimation = dynamic(() => import("./components/OpeningAnimation"), { ssr: false });
 const DailyWisdom = lazy(() => import("./components/DailyWisdom"));
 const Slideshow = lazy(() => import("./components/Slideshow"));
 const Events = lazy(() => import("./components/Events"));
@@ -29,6 +30,7 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [playChant, setPlayChant] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("dark-mode");
@@ -38,16 +40,17 @@ export default function Home() {
     }
   }, []);
 
-  // Preload heavy sections after idle
+  // Gentle idle preload of just the first deferred chunk
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      requestIdleCallback(() => {
-        import("./components/DailyWisdom");
-        import("./components/Slideshow");
-        import("./components/Events");
-        import("./components/Activities");
-        import("./components/VedicKnowledge");
-      });
+    const preload = () => import("./components/DailyWisdom");
+
+    if (typeof window === "undefined") return;
+
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(preload, { timeout: 2000 });
+    } else {
+      // fallback for browsers without requestIdleCallback
+      setTimeout(preload, 1200);
     }
   }, []);
 
@@ -62,24 +65,27 @@ export default function Home() {
       <div className={`${isDarkMode ? "dark" : ""} relative min-h-screen overflow-hidden`}>
         <div className="layered-background" aria-hidden="true" />
 
-        <AumChant />
+        {/* Aum Chant mounted only on user intent */}
+        {/* <button onClick={() => setPlayChant(true)} className="btn">Play Aum</button>
+        {playChant && <AumChant />} */}
+
         <Header />
         <DarkModeToggle isDark={isDarkMode} toggle={() => setIsDarkMode((d) => !d)} />
         <Hero setShowForm={setShowForm} />
         <MembershipModal showForm={showForm} setShowForm={setShowForm} onClose={() => setShowForm(false)} />
 
         <main className="main-content">
-          <Suspense fallback={<div className="loader">Loading...</div>}><DailyWisdom /></Suspense>
-          <Suspense fallback={<div className="loader">Loading...</div>}><Slideshow /></Suspense>
-          <Suspense fallback={<div className="loader">Loading...</div>}><Events /></Suspense>
-          <Suspense fallback={<div className="loader">Loading...</div>}><Activities /></Suspense>
-          <Suspense fallback={<div className="loader">Loading...</div>}><VaidikKnowledge /></Suspense>
-          <Suspense fallback={<div className="loader">Loading...</div>}><WhyAryaSamaj /></Suspense>
-          <Suspense fallback={<div className="loader">Loading...</div>}><MissionVision /></Suspense>
-          <Suspense fallback={<div className="loader">Loading...</div>}><StoriesOfTransformation /></Suspense>
-          <Testimonials />
-          <Committee />
-          <Suspense fallback={<div className="loader">Loading...</div>}><VaidikQuiz /></Suspense>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><DailyWisdom /></Suspense></DeferInView>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><Slideshow /></Suspense></DeferInView>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><Events /></Suspense></DeferInView>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><Activities /></Suspense></DeferInView>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><VaidikKnowledge /></Suspense></DeferInView>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><WhyAryaSamaj /></Suspense></DeferInView>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><MissionVision /></Suspense></DeferInView>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><StoriesOfTransformation /></Suspense></DeferInView>
+          <DeferInView><Testimonials /></DeferInView>
+          <DeferInView><Committee /></DeferInView>
+          <DeferInView><Suspense fallback={<div className="loader">Loading...</div>}><VaidikQuiz /></Suspense></DeferInView>
         </main>
 
         <Footer />
