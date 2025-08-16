@@ -17,7 +17,7 @@ export default function Slideshow() {
       const res = await fetch("/slides.json");
       const data = await res.json();
       if (isMounted) setSlides(data);
-    } catch (_) {
+    } catch {
     }
   };
 
