@@ -25,7 +25,7 @@ export default function LandingScene() {
   useEffect(() => {
     import("../../public/animations/lotus-bloom.json")
       .then((data) => setAnimationData(data))
-      .catch((err) => console.error("Failed to load animation:", err));
+      .catch((err) => {});
 
     const timeout = setTimeout(() => setAnimationComplete(true), 4000);
     return () => clearTimeout(timeout);

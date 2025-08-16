@@ -66,7 +66,6 @@ export default function MembershipModal({ showForm, setShowForm }) {
       );
       reset();
     } catch (err) {
-      console.error("Error submitting form: ", err);
       setErrorMsg(`❌ Submission failed. ${err?.message || "Please try again."}`);
     } finally {
       setLoading(false);

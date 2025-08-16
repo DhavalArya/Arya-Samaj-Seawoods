@@ -13,14 +13,13 @@ export default function AumChant() {
     setIsPlaying(savedState);
 
     if (savedState && audioRef.current) {
-      audioRef.current.play().catch(err => console.error("Auto-play failed:", err));
+      audioRef.current.play().catch(err => {});
     }
 
     const handleInteraction = () => {
       if (savedState && !audioRef.current?.paused) return;
       if (savedState) {
         audioRef.current.play().catch((error) => {
-          console.error("Autoplay prevented:", error);
         });
       }
       document.removeEventListener("click", handleInteraction);
@@ -43,7 +42,6 @@ export default function AumChant() {
       audioRef.current.pause();
     } else {
       audioRef.current.play().catch((error) => {
-        console.error("Playback prevented:", error);
       });
     }
 

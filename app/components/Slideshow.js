@@ -17,7 +17,6 @@ export default function Slideshow() {
         const data = await res.json();
         if (isMounted) setSlides(data);
       } catch (err) {
-        console.error("Failed to load slides:", err);
       }
     };
 

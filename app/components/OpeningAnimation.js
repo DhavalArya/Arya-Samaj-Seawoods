@@ -22,7 +22,7 @@ export default function OpeningAnimation({ onComplete }) {
       // Preload JSON animation for better SEO & performance
       import("../../public/animations/lotus-bloom.json")
         .then((data) => setAnimationData(data))
-        .catch((err) => console.error("Failed to load animation:", err));
+        .catch((err) => {});
     }
 
     // Auto-hide animation after 4 seconds

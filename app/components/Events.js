@@ -28,7 +28,6 @@ export default function Events() {
       })
       .catch((err) => {
         if (err.name !== "AbortError") {
-          console.error("Failed to load events:", err);
         }
       });
 

@@ -20,7 +20,6 @@ export default function Header() {
       const data = await res.json();
       setter(data);
     } catch (err) {
-      console.error(`Failed to load ${url}:`, err);
     }
   }, []);
 

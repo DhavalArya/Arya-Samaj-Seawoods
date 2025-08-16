@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense, lazy } from "react";
-
+import Script from "next/script";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import MembershipModal from "./components/MembershipModal";
@@ -10,9 +10,9 @@ import DonationPopup from "./components/DonationPopup";
 import AumChant from "./components/AumChant";
 import DarkModeToggle from "./components/DarkModeToggle";
 import OpeningAnimation from "./components/OpeningAnimation";
-import Script from "next/script";
+import dynamic from "next/dynamic";
 
-// Lazy-loaded Sections
+// Heavy sections – dynamically imported
 const DailyWisdom = lazy(() => import("./components/DailyWisdom"));
 const Slideshow = lazy(() => import("./components/Slideshow"));
 const Events = lazy(() => import("./components/Events"));
@@ -21,32 +21,15 @@ const VaidikKnowledge = lazy(() => import("./components/VedicKnowledge"));
 const WhyAryaSamaj = lazy(() => import("./components/WhyAryaSamaj"));
 const MissionVision = lazy(() => import("./components/MissionVision"));
 const StoriesOfTransformation = lazy(() => import("./components/StoriesOfTransformation"));
-const Testimonials = lazy(() => import("./components/Testimonials"));
-const Committee = lazy(() => import("./components/Committee"));
+const Testimonials = dynamic(() => import("./components/Testimonials"), { ssr: false });
+const Committee = dynamic(() => import("./components/Committee"), { ssr: false });
 const VaidikQuiz = lazy(() => import("./components/VedicQuiz"));
-
-export const metadata = {
-  title: "Arya Samaj Seawoods",
-  description: "Official site of Arya Samaj Seawoods — spiritual wisdom, social reform, education & community.",
-  openGraph: {
-    title: "Arya Samaj Seawoods",
-    description: "Join us in spreading Vaidik wisdom, reform, and social upliftment.",
-    url: "https://yourdomain.com/",
-    siteName: "Arya Samaj Seawoods",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Arya Samaj Seawoods",
-    description: "Discover Vaidik knowledge, social reform, and community initiatives.",
-  },
-};
 
 export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
-  // Preserve dark mode via localStorage
   useEffect(() => {
     const saved = localStorage.getItem("dark-mode");
     if (saved === "enabled") {
@@ -55,40 +38,53 @@ export default function Home() {
     }
   }, []);
 
+  // Preload heavy sections after idle
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      requestIdleCallback(() => {
+        import("./components/DailyWisdom");
+        import("./components/Slideshow");
+        import("./components/Events");
+        import("./components/Activities");
+        import("./components/VedicKnowledge");
+      });
+    }
+  }, []);
+
   return (
     <>
       <Script src="https://analytics.example.com/script.js" strategy="lazyOnload" />
 
-      {!animationFinished ? (
+      {!animationFinished && (
         <OpeningAnimation onComplete={() => setAnimationFinished(true)} />
-      ) : (
-        <div className={`${isDarkMode ? "dark" : ""} relative min-h-screen overflow-hidden`}>
-          <div className="layered-background" aria-hidden="true" />
-
-          <AumChant />
-          <Header />
-          <DarkModeToggle isDark={isDarkMode} toggle={() => setIsDarkMode((d) => !d)} />
-          <Hero setShowForm={setShowForm} />
-          <MembershipModal showForm={showForm} setShowForm={setShowForm} onClose={() => setShowForm(false)} />
-
-          <main className="main-content">
-            <Suspense fallback={<div className="loader">Loading Wisdom...</div>}><DailyWisdom /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Visuals...</div>}><Slideshow /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Events...</div>}><Events /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Activities...</div>}><Activities /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Knowledge...</div>}><VaidikKnowledge /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Values...</div>}><WhyAryaSamaj /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Mission...</div>}><MissionVision /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Stories...</div>}><StoriesOfTransformation /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Testimonials...</div>}><Testimonials /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Committee...</div>}><Committee /></Suspense>
-            <Suspense fallback={<div className="loader">Loading Quiz...</div>}><VaidikQuiz /></Suspense>
-          </main>
-
-          <Footer />
-          <DonationPopup />
-        </div>
       )}
+
+      <div className={`${isDarkMode ? "dark" : ""} relative min-h-screen overflow-hidden`}>
+        <div className="layered-background" aria-hidden="true" />
+
+        <AumChant />
+        <Header />
+        <DarkModeToggle isDark={isDarkMode} toggle={() => setIsDarkMode((d) => !d)} />
+        <Hero setShowForm={setShowForm} />
+        <MembershipModal showForm={showForm} setShowForm={setShowForm} onClose={() => setShowForm(false)} />
+
+        <main className="main-content">
+          <Suspense fallback={<div className="loader">Loading...</div>}><DailyWisdom /></Suspense>
+          <Suspense fallback={<div className="loader">Loading...</div>}><Slideshow /></Suspense>
+          <Suspense fallback={<div className="loader">Loading...</div>}><Events /></Suspense>
+          <Suspense fallback={<div className="loader">Loading...</div>}><Activities /></Suspense>
+          <Suspense fallback={<div className="loader">Loading...</div>}><VaidikKnowledge /></Suspense>
+          <Suspense fallback={<div className="loader">Loading...</div>}><WhyAryaSamaj /></Suspense>
+          <Suspense fallback={<div className="loader">Loading...</div>}><MissionVision /></Suspense>
+          <Suspense fallback={<div className="loader">Loading...</div>}><StoriesOfTransformation /></Suspense>
+          <Testimonials />
+          <Committee />
+          <Suspense fallback={<div className="loader">Loading...</div>}><VaidikQuiz /></Suspense>
+        </main>
+
+        <Footer />
+        <DonationPopup />
+      </div>
     </>
   );
 }
