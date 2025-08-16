@@ -21,7 +21,7 @@ export default function DonationPopup() {
       {/* Donate Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-5 right-5 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full shadow-lg z-50"
+        className="fixed bottom-3 right-5 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full shadow-lg z-50"
         aria-label="Donate to Arya Samaj Seawoods"
         title="Donate to Arya Samaj Seawoods"
       >

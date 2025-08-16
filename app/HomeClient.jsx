@@ -25,7 +25,7 @@ const Testimonials = dynamic(() => import("./components/Testimonials"), { ssr: f
 const Committee = dynamic(() => import("./components/Committee"), { ssr: false });
 const VaidikQuiz = lazy(() => import("./components/VedicQuiz"));
 
-// 👇 lazy components that should load only on intent
+// Lazy components that should load only on intent
 const DonationPopup = dynamic(() => import("./components/DonationPopup"), { ssr: false });
 const AumChant = dynamic(() => import("./components/AumChant"), { ssr: false });
 
@@ -50,17 +50,60 @@ function useIsSmallScreen() {
   return useMediaQuery("(max-width: 640px)");
 }
 
+function FloatingButton({ onClick, ariaLabel, className = "", children }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={ariaLabel}
+      className={[
+        // identical sizing for every FAB
+        "inline-flex h-11 items-center gap-2 px-4 rounded-full",
+        "text-white text-sm sm:text-base font-semibold leading-none",
+        "shadow-lg select-none",
+        className,
+      ].join(" ")}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
-  // 👇 UI state for the floating actions
+  // UI state for the floating actions
   const [playChant, setPlayChant] = useState(false);
   const [donateOpen, setDonateOpen] = useState(false);
 
   const isSmall = useIsSmallScreen();
   const prefersReducedMotion = usePrefersReducedMotion();
+
+  // OPTION B: allow mobile opening animation after gesture or idle
+  const [allowMobileAnim, setAllowMobileAnim] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || !isSmall) return;
+
+    const allow = () => setAllowMobileAnim(true);
+
+    // user gesture path
+    window.addEventListener("touchstart", allow, { once: true, passive: true });
+    window.addEventListener("scroll", allow, { once: true, passive: true });
+
+    // idle fallback
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(() => setAllowMobileAnim(true), { timeout: 2500 });
+    } else {
+      const t = setTimeout(() => setAllowMobileAnim(true), 2500);
+      return () => clearTimeout(t);
+    }
+
+    return () => {
+      window.removeEventListener("touchstart", allow);
+      window.removeEventListener("scroll", allow);
+    };
+  }, [isSmall]);
 
   // restore dark mode
   useEffect(() => {
@@ -87,9 +130,12 @@ export default function Home() {
     <>
       <Script src="https://analytics.example.com/script.js" strategy="lazyOnload" />
 
-      {!(isSmall || prefersReducedMotion) && !animationFinished && (
-        <OpeningAnimation onComplete={() => setAnimationFinished(true)} />
-      )}
+      {/* Desktop: show immediately. Mobile: show after gesture/idle. Respect reduced motion. */}
+      {!prefersReducedMotion &&
+        !animationFinished &&
+        (!isSmall || allowMobileAnim) && (
+          <OpeningAnimation onComplete={() => setAnimationFinished(true)} />
+        )}
 
       <div className={`${isDarkMode ? "dark" : ""} relative min-h-screen overflow-hidden`}>
         <div className="layered-background" aria-hidden="true" />
@@ -164,13 +210,14 @@ export default function Home() {
         {/* Bottom-left: Aum Chant */}
         <div className="fixed left-3 bottom-4 z-40">
           {!playChant ? (
-            <button
+            <FloatingButton
               onClick={() => setPlayChant(true)}
-              className="rounded-full px-4 py-2 bg-green-600 text-white shadow-lg hover:bg-green-700"
-              aria-label="Open Aum chant player"
+              ariaLabel="Open Aum chant player"
+              className="bg-green-600 hover:bg-green-700"
             >
-              ▶︎ Play Aum
-            </button>
+              <span aria-hidden="true" className="align-middle">🔊</span>
+              <span className="align-middle">Play Aum</span>
+            </FloatingButton>
           ) : (
             <AumChant onClose={() => setPlayChant(false)} />
           )}
@@ -179,13 +226,14 @@ export default function Home() {
         {/* Bottom-right: Donate */}
         <div className="fixed right-3 bottom-4 z-40">
           {!donateOpen ? (
-            <button
+            <FloatingButton
               onClick={() => setDonateOpen(true)}
-              className="rounded-full px-4 py-2 bg-orange-600 text-white shadow-lg hover:bg-orange-700"
-              aria-label="Open donate dialog"
+              ariaLabel="Open donate dialog"
+              className="bg-orange-600 hover:bg-orange-700"
             >
-              🙏 Donate
-            </button>
+              <span aria-hidden="true" className="align-middle">🙏</span>
+              <span className="align-middle">Donate</span>
+            </FloatingButton>
           ) : (
             <DonationPopup onClose={() => setDonateOpen(false)} />
           )}
