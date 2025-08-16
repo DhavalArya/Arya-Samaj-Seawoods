@@ -1,7 +1,8 @@
 "use client";
-import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { motion, useInView } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import Head from "next/head";
 
 const testimonials = [
   { name: "Draupadi Murmu", role: "President of India", feedback: "India has been blessed by the birth of brilliant personalities like Maharshi Dayānand Saraswatī." },
@@ -16,54 +17,127 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
-  const scrollRef = useRef(null);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { triggerOnce: true });
 
-  const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -350, behavior: "smooth" });
+  // Responsive columns
+  const [cols, setCols] = useState(3);
+  useEffect(() => {
+    const setByWidth = () => {
+      if (window.innerWidth < 640) setCols(1);
+      else if (window.innerWidth < 1024) setCols(2);
+      else setCols(3);
+    };
+    setByWidth();
+    window.addEventListener("resize", setByWidth);
+    return () => window.removeEventListener("resize", setByWidth);
+  }, []);
+
+  const total = testimonials.length;
+  const maxIndex = useMemo(() => Math.max(0, total - cols), [total, cols]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Ensure valid index
+  useEffect(() => {
+    setCurrentIndex((i) => Math.min(i, maxIndex));
+  }, [maxIndex]);
+
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+  }, [maxIndex]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+  }, [maxIndex]);
+
+  // Autoplay with pause on hover
+  const AUTO = 4000;
+  const timerRef = useRef(null);
+  useEffect(() => {
+    timerRef.current = setInterval(nextSlide, AUTO);
+    return () => clearInterval(timerRef.current);
+  }, [nextSlide]);
+  const pause = () => clearInterval(timerRef.current);
+  const resume = () => {
+    timerRef.current = setInterval(nextSlide, AUTO);
   };
 
-  const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 350, behavior: "smooth" });
-  };
+  const cardBasis = `${100 / cols}%`;
 
   return (
-    <section className="relative bg-yellow-100 p-6 rounded-lg shadow-lg max-w-6xl mx-auto">
-      <h2 className="text-3xl font-bold text-orange-700 mb-4 text-center">
-        🕉️ Revered Voices on Maharshi Dayanand & Arya Samaj
-      </h2>
+    <>
+      <Head>
+        <meta
+          name="description"
+          content="Hear what world leaders, thinkers, and visionaries have said about Maharshi Dayanand Saraswati and the Arya Samaj movement."
+        />
+        <meta
+          name="keywords"
+          content="Arya Samaj testimonials, Maharshi Dayanand quotes, Arya Samaj leaders, Arya Samaj praise"
+        />
+      </Head>
 
-      {/* Scroll Buttons */}
-      <button
-        onClick={scrollLeft}
-        className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 p-2 bg-gray-800/60 text-white rounded-full hover:bg-gray-900 transition-all"
+      <motion.section
+        ref={sectionRef}
+        initial={{ opacity: 0, y: 40 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        className="bg-yellow-100 py-10 px-6 rounded-3xl shadow-lg w-full max-w-6xl mx-auto text-center"
+        id="testimonials"
+        aria-label="Testimonials Carousel"
       >
-        <FaChevronLeft size={20} />
-      </button>
-      <button
-        onClick={scrollRight}
-        className="absolute right-3 top-1/2 transform -translate-y-1/2 z-10 p-2 bg-gray-800/60 text-white rounded-full hover:bg-gray-900 transition-all"
-      >
-        <FaChevronRight size={20} />
-      </button>
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          🕉️ Revered Voices on Maharshi Dayanand & Arya Samaj
+        </h2>
 
-      {/* Scrollable Testimonials */}
-      <div
-        ref={scrollRef}
-        className="overflow-x-auto flex space-x-6 snap-x scroll-smooth scrollbar-hide px-4 scroll-container"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {testimonials.map((testimonial, index) => (
-          <motion.div
-            key={index}
-            className="min-w-[300px] bg-white p-4 rounded-lg shadow-md snap-center"
-            whileHover={{ scale: 1.05 }}
+        <div
+          className="relative flex items-center justify-center overflow-hidden w-full"
+          onMouseEnter={pause}
+          onMouseLeave={resume}
+        >
+          {/* Left Button */}
+          <button
+            aria-label="Previous Testimonial Slide"
+            className="absolute left-2 z-10 p-3 bg-gray-800/60 text-white rounded-full shadow-md hover:bg-gray-900 transition-all"
+            onClick={prevSlide}
           >
-            <h3 className="text-xl font-semibold text-orange-600">{testimonial.name}</h3>
-            <p className="text-sm text-gray-600">{testimonial.role}</p>
-            <p className="text-gray-700 mt-2">{testimonial.feedback}</p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
+            <FaChevronLeft size={22} />
+          </button>
+
+          {/* Viewport */}
+          <div className="overflow-hidden w-full">
+            <div
+              className="flex transition-transform duration-500 ease-linear"
+              style={{
+                transform: `translateX(-${currentIndex * (100 / cols)}%)`,
+                width: "100%",
+              }}
+            >
+              {testimonials.map((t, i) => (
+                <div key={`${t.name}-${i}`} style={{ flex: `0 0 ${cardBasis}` }} className="px-3">
+                  <motion.div
+                    className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start text-left border border-gray-200 h-full"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <p className="text-gray-700 text-sm md:text-base mb-4">"{t.feedback}"</p>
+                    <h3 className="text-lg md:text-xl font-semibold text-gray-900">{t.name}</h3>
+                    <p className="text-sm text-gray-600">{t.role}</p>
+                  </motion.div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Button */}
+          <button
+            aria-label="Next Testimonial Slide"
+            className="absolute right-2 z-10 p-3 bg-gray-800/60 text-white rounded-full shadow-md hover:bg-gray-900 transition-all"
+            onClick={nextSlide}
+          >
+            <FaChevronRight size={22} />
+          </button>
+        </div>
+      </motion.section>
+    </>
   );
 }
