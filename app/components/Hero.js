@@ -124,6 +124,8 @@ export default function Hero({ setShowForm }) {
             aria-label="Join Arya Samaj Seawoods movement"
           >
             Join the Movement
+            <br />
+            Fill the Membership Form
           </motion.button>
 
           {/* Rotating Quotes — first quote is already in HTML for SEO */}
