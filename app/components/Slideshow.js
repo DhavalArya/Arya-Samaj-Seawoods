@@ -10,15 +10,16 @@ export default function Slideshow() {
 
   // Fetch slide data from public/slides.json
   useEffect(() => {
-    let isMounted = true;
-    const fetchSlides = async () => {
-      try {
-        const res = await fetch("/slides.json");
-        const data = await res.json();
-        if (isMounted) setSlides(data);
-      } catch (err) {
-      }
-    };
+  let isMounted = true;
+
+  const fetchSlides = async () => {
+    try {
+      const res = await fetch("/slides.json");
+      const data = await res.json();
+      if (isMounted) setSlides(data);
+    } catch (_) {
+    }
+  };
 
     fetchSlides();
     return () => {

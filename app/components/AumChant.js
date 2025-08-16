@@ -13,14 +13,13 @@ export default function AumChant() {
     setIsPlaying(savedState);
 
     if (savedState && audioRef.current) {
-      audioRef.current.play().catch(err => {});
+      audioRef.current.play().catch(() => {});
     }
 
     const handleInteraction = () => {
       if (savedState && !audioRef.current?.paused) return;
       if (savedState) {
-        audioRef.current.play().catch((error) => {
-        });
+        audioRef.current.play().catch(() => {});
       }
       document.removeEventListener("click", handleInteraction);
       document.removeEventListener("touchstart", handleInteraction);
@@ -41,7 +40,7 @@ export default function AumChant() {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play().catch((error) => {
+      audioRef.current.play().catch(() => {
       });
     }
 

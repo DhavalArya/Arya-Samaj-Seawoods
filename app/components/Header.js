@@ -19,7 +19,8 @@ export default function Header() {
       const res = await fetch(url);
       const data = await res.json();
       setter(data);
-    } catch (err) {
+    } catch (_) {
+      // Error intentionally ignored
     }
   }, []);
 
