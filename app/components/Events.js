@@ -37,7 +37,7 @@ export default function Events() {
         const past = sorted.filter((event) => new Date(event.date) < now);
 
         setUpcomingEvents(upcoming);
-        setPastEvents(past);
+        // setPastEvents(past);
         setNextEvent(upcoming.length > 0 ? upcoming[0] : null);
       })
       .catch((err) => {
