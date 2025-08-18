@@ -283,7 +283,7 @@ export default function Events() {
           )}
         </div>
 
-        <div className="mt-10 w-full">
+        {/* <div className="mt-10 w-full">
           <h3 className="text-2xl font-semibold text-gray-700 mb-3">
             🕰️ Past Events
           </h3>
@@ -308,7 +308,7 @@ export default function Events() {
               ))}
             </ul>
           )}
-        </div>
+        </div> */}
       </div>
 
       <Tooltip id="event-tooltip" place="top" effect="solid" />
