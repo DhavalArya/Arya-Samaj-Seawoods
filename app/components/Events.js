@@ -34,7 +34,7 @@ export default function Events() {
         const upcoming = sorted
           .filter((event) => new Date(event.date) >= now)
           .slice(0, 3);
-        const past = sorted.filter((event) => new Date(event.date) < now);
+        // const past = sorted.filter((event) => new Date(event.date) < now);
 
         setUpcomingEvents(upcoming);
         // setPastEvents(past);
