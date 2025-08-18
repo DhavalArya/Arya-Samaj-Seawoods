@@ -84,7 +84,8 @@ export default function Events() {
   const getEventShareMessage = (event) => {
     const formattedDate = format(new Date(event.date), "dd/MM/yyyy");
 
-    return `🌸 *आर्य समाज सीवुड* में आपका हार्दिक स्वागत है! 🌸  
+    return `📢 *${event.title}*  
+  🌸 ${event.description}🌸
   📍 पता: प्लॉट नं. ५, सूर्या सीएचएस, सेक्टर ५० (ओल्ड), सीवुड्स, नवी मुंबई  
   📅 तारीख: ${formattedDate} (रविवार)  
   🕘 समय: ${event.time}  
