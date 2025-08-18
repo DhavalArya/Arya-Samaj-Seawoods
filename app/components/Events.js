@@ -110,6 +110,8 @@ export default function Events() {
   🌈 आप सभी का उत्साह से स्वागत है — चलिए, मिलकर आध्यात्म और प्रेम का वातावरण बनाएं!  
   🙏 धन्यवाद  
   🕉️ *आर्य समाज सीवुड*  
+  📞 संपर्क सूत्र: +91-9223344556 | +91-9323022055 | 🌐 वेबसाइट: www.aryasamajseawoods.co.in 
+  📍 स्थान: https://maps.app.goo.gl/QQUvD9oD1yWA9ps8A 📧 ईमेल: aryasamajseawoods@gmail.com
 
   #AryaSamaj #Seawoods #हवन #भजन #सत्संग #प्रसाद #आध्यात्मिकता #नवीमुंबई #समाजसेवा #शांति`;
   };
