@@ -107,7 +107,7 @@ export default function DonationPopup() {
           actionStatus: "PotentialActionStatus",
           target: {
             "@type": "EntryPoint",
-            urlTemplate: "https://yourdomain.com/#donate",
+            urlTemplate: "https://aryasamajseawoods.co.in/#donate",
           },
           recipient: {
             "@type": "Organization",

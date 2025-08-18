@@ -19,7 +19,8 @@ export default function Events() {
   const [countdown, setCountdown] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  // Fetch events.json
+  const siteUrl = "https://aryasamajseawoods.co.in";
+
   useEffect(() => {
     const controller = new AbortController();
     fetch("/events.json", { signal: controller.signal })
@@ -50,7 +51,6 @@ export default function Events() {
     return () => controller.abort();
   }, []);
 
-  // Precompute event dates mapping
   const eventDates = useMemo(() => {
     const eventsObj = {};
     events.forEach((event) => {
@@ -59,7 +59,6 @@ export default function Events() {
     return eventsObj;
   }, [events]);
 
-  // Countdown logic
   useEffect(() => {
     if (!nextEvent) return;
 
@@ -69,12 +68,12 @@ export default function Events() {
         new Date()
       );
       if (timeLeft <= 0) {
-        setCountdown("⏳ Happening Today!");
+        setCountdown("⏳ Event is today!");
       } else {
         const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
         const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-        setCountdown(`⏳ ${days}d ${hours}h ${minutes}m left`);
+        setCountdown(`⏳ ${days} days ${hours} hours ${minutes} minutes left`);
       }
     };
 
@@ -82,6 +81,84 @@ export default function Events() {
     const interval = setInterval(updateCountdown, 60000);
     return () => clearInterval(interval);
   }, [nextEvent]);
+
+  // Hindi share message (used only for share content)
+  const getEventShareMessage = (event) => {
+    const formattedDate = format(new Date(event.date), "dd/MM/yyyy");
+
+    return `🌸 *आर्य समाज सीवुड* में आपका हार्दिक स्वागत है! 🌸  
+  📍 पता: प्लॉट नं. ५, सूर्या सीएचएस, सेक्टर ५० (ओल्ड), सीवुड्स, नवी मुंबई  
+  📅 तारीख: ${formattedDate} (रविवार)  
+  🕘 समय: ${event.time}  
+
+  ✨ कार्यक्रम क्रम: हवन 🔥 → भजन 🎶 → सत्संग 🗣️ → प्रसाद 🍽️  
+
+  🌟 *ब्रम्हा विजय पाल शास्त्री* जी के साथ आध्यात्मिक अनुभूति।  
+
+  🎉 विशेष:  
+  -  
+
+  🙏 कार्यक्रम एक पावन यात्रा है — एक साथ आओ, दिल से जुड़ो, और आध्यात्मिक आनंद उठाओ!  
+
+  👥 समिति के सदस्य:  
+  - प्रधान: संजीव अग्रवाल  
+  - निवेदक: श्री हरिदास अगरवाल, डॉ. तुलसीराम बांगिया  
+  - उप प्रधान: श्री ब्रह्मदत्त खुलर, महेंद्र आर्य  
+  - मंत्री: श्री स्वदेश करमाकर, श्री धवल आर्य  
+  - कोषाध्यक्ष: श्री विजय गुप्ता, चंद्रबली सिंह  
+  - सदस्यगण: प्रेम कुमार अरोड़ा, प्रमोद गुलाटी, आर पी गिरधर, पुष्पिंदर सिंह, सविता गुलाटी, शिप्रा करमाकर, सविता गर्जे, डॉ. रजनी गुप्ता  
+
+  🌈 आप सभी का उत्साह से स्वागत है — चलिए, मिलकर आध्यात्म और प्रेम का वातावरण बनाएं!  
+  🙏 धन्यवाद  
+  🕉️ *आर्य समाज सीवुड*  
+
+  #AryaSamaj #Seawoods #हवन #भजन #सत्संग #प्रसाद #आध्यात्मिकता #नवीमुंबई #समाजसेवा #शांति`;
+  };
+
+  const openNew = (url) => window.open(url, "_blank", "noopener,noreferrer");
+
+  const shareOnWhatsApp = (event) => {
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      getEventShareMessage(event)
+    )}`;
+    openNew(url);
+  };
+
+  const shareOnX = (event) => {
+    const message = getEventShareMessage(event);
+    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(message)}`;
+    openNew(url);
+  };
+
+  const shareOnFacebook = (event) => {
+    const message = getEventShareMessage(event);
+    // Facebook share link requires a URL, so we just open facebook.com
+    // Users can paste message manually, as Facebook does not support text param in URL
+    openNew("https://facebook.com");
+    // Optionally, you can copy the message automatically:
+    navigator.clipboard?.writeText(message);
+  };
+
+  const shareOnLinkedIn = (event) => {
+    const message = getEventShareMessage(event);
+    openNew("https://linkedin.com");
+    navigator.clipboard?.writeText(message);
+  };
+
+  // Instagram share (Instagram does NOT have official text share URLs,
+  // so we copy text to clipboard and open instagram.com for user to paste manually)
+  const shareOnInstagram = (event) => {
+    const message = getEventShareMessage(event);
+    navigator.clipboard
+      .writeText(message)
+      .then(() => {
+        alert("Message copied! Please paste it in your Instagram post.");
+        openNew("https://instagram.com");
+      })
+      .catch(() => {
+        openNew("https://instagram.com");
+      });
+  };
 
   return (
     <motion.section
@@ -93,7 +170,6 @@ export default function Events() {
       id="calendar"
       aria-labelledby="events-heading"
     >
-      {/* Section Title */}
       <h2
         id="events-heading"
         className="text-4xl font-bold text-[#8C4A08] mb-4 flex items-center justify-center"
@@ -101,7 +177,6 @@ export default function Events() {
         📅 Upcoming Events
       </h2>
 
-      {/* Countdown */}
       {nextEvent ? (
         <p
           className="text-lg font-medium text-[#D9534F] bg-white px-4 py-2 rounded-full inline-block shadow-md mb-6"
@@ -111,11 +186,10 @@ export default function Events() {
         </p>
       ) : (
         <p className="text-lg font-medium text-gray-700 bg-white px-4 py-2 rounded-full inline-block shadow mb-6">
-          🙁 No upcoming events found.
+          🙁 No upcoming events available.
         </p>
       )}
 
-      {/* Calendar */}
       <div className="flex flex-col items-center">
         <Calendar
           onChange={setSelectedDate}
@@ -137,37 +211,73 @@ export default function Events() {
             ) : null;
           }}
           className="rounded-lg shadow-md border-2 border-orange-400 bg-white text-black"
-          aria-label="Events calendar showing highlighted event dates"
+          aria-label="Events Calendar"
         />
 
-        {/* Upcoming Events List */}
         <div className="mt-6 w-full">
           <h3 className="text-2xl font-semibold text-orange-700 mb-3">
             🗓️ Upcoming Events
           </h3>
           {lastUpdated && (
             <p className="text-sm text-gray-600 mb-2">
-              Updated as of {format(lastUpdated, "MMM dd, yyyy")}
+              Last Updated: {format(lastUpdated, "dd MMM yyyy")}
             </p>
           )}
           {upcomingEvents.length === 0 ? (
-            <p className="text-gray-700">No upcoming events available.</p>
+            <p className="text-gray-700">No events available.</p>
           ) : (
-            <ul className="text-left space-y-3">
+            <ul className="text-left space-y-6">
               {upcomingEvents.map((event, index) => (
                 <li
                   key={index}
                   className="py-4 px-5 bg-orange-100 text-gray-900 rounded-lg shadow-sm hover:bg-orange-200 transition-all"
                 >
                   <h4 className="font-semibold text-lg">{event.title}</h4>
-                  <p className="text-sm text-gray-700 mb-1">
-                    {event.description}
-                  </p>
-                  <div className="flex justify-between items-center text-sm text-orange-700">
+                  <p className="text-sm text-gray-700 mb-1">{event.description}</p>
+                  <div className="flex justify-between items-center text-sm text-orange-700 mb-3">
                     <time dateTime={event.date}>
-                      📅 {format(new Date(event.date), "MMM dd, yyyy")}
+                      📅 {format(new Date(event.date), "dd/MM/yyyy")}
                     </time>
-                    <span>🕒 {event.time}</span>
+                    <span>⏰ {event.time}</span>
+                  </div>
+
+                  {/* Share Buttons */}
+                  <div className="flex gap-3 flex-wrap">
+                    <button
+                      onClick={() => shareOnWhatsApp(event)}
+                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm"
+                      title="Share on WhatsApp"
+                    >
+                      WhatsApp
+                    </button>
+                    <button
+                      onClick={() => shareOnX(event)}
+                      className="bg-black text-white px-3 py-1 rounded hover:bg-gray-800 text-sm"
+                      title="Share on X"
+                    >
+                      X
+                    </button>
+                    <button
+                      onClick={() => shareOnFacebook(event)}
+                      className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm"
+                      title="Share on Facebook"
+                    >
+                      Facebook
+                    </button>
+                    <button
+                      onClick={() => shareOnLinkedIn(event)}
+                      className="bg-blue-800 text-white px-3 py-1 rounded hover:bg-blue-900 text-sm"
+                      title="Share on LinkedIn"
+                    >
+                      LinkedIn
+                    </button>
+                    <button
+                      onClick={() => shareOnInstagram(event)}
+                      className="bg-pink-500 text-white px-3 py-1 rounded hover:bg-pink-600 text-sm"
+                      title="Share on Instagram"
+                    >
+                      Instagram
+                    </button>
                   </div>
                 </li>
               ))}
@@ -175,74 +285,35 @@ export default function Events() {
           )}
         </div>
 
-        {/* Past Events */}
-        {/* <div className="mt-10 w-full">
-          <h3 className="text-2xl font-semibold text-orange-700 mb-3">
-            📜 Past Events
+        <div className="mt-10 w-full">
+          <h3 className="text-2xl font-semibold text-gray-700 mb-3">
+            🕰️ Past Events
           </h3>
           {pastEvents.length === 0 ? (
             <p className="text-gray-700">No past events available.</p>
           ) : (
-            <ul className="text-left space-y-3">
+            <ul className="text-left space-y-4">
               {pastEvents.map((event, index) => (
                 <li
                   key={index}
-                  className="py-4 px-5 bg-gray-100 text-gray-800 rounded-lg shadow-sm hover:bg-gray-200 transition-all"
+                  className="py-3 px-5 bg-gray-100 rounded-lg shadow-sm text-gray-800"
                 >
-                  <h4 className="font-semibold text-lg">{event.title}</h4>
-                  <p className="text-sm text-gray-600 mb-1">
-                    {event.description}
-                  </p>
-                  <div className="flex justify-between items-center text-sm text-gray-700">
-                    <time dateTime={event.date}>
-                      📅 {format(new Date(event.date), "MMM dd, yyyy")}
-                    </time>
-                    <span>🕒 {event.time}</span>
-                  </div>
+                  <h4 className="font-semibold">{event.title}</h4>
+                  <p className="text-sm text-gray-600">{event.description}</p>
+                  <time
+                    className="text-xs text-gray-500"
+                    dateTime={event.date}
+                  >
+                    📅 {format(new Date(event.date), "dd/MM/yyyy")}
+                  </time>
                 </li>
               ))}
             </ul>
           )}
-        </div> */}
+        </div>
       </div>
 
-      {/* Tooltip */}
-      <Tooltip id="event-tooltip" />
-
-      {/* Structured Data */}
-      {events.length > 0 && (
-        <script type="application/ld+json">
-          {JSON.stringify(
-            events.map((event) => ({
-              "@context": "https://schema.org",
-              "@type": "Event",
-              name: event.title,
-              description: event.description,
-              startDate: `${event.date}T${event.time.split(" - ")[0].replace(
-                / /g,
-                ""
-              )}`,
-              endDate: `${event.date}T${event.time.split(" - ")[1].replace(
-                / /g,
-                ""
-              )}`,
-              eventAttendanceMode:
-                "https://schema.org/OfflineEventAttendanceMode",
-              eventStatus: "https://schema.org/EventScheduled",
-              location: {
-                "@type": "Place",
-                name: "Arya Samaj Seawoods",
-                address: "Seawoods, Navi Mumbai, India",
-              },
-              organizer: {
-                "@type": "Organization",
-                name: "Arya Samaj Seawoods",
-                url: "https://yourdomain.com",
-              },
-            }))
-          )}
-        </script>
-      )}
+      <Tooltip id="event-tooltip" place="top" effect="solid" />
     </motion.section>
   );
 }

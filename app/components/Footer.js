@@ -135,7 +135,7 @@ export default function Footer() {
         <h2 className="text-xl font-bold font-merriweather mb-3">📍 Arya Samaj Seawoods</h2>
         <div className="w-full flex justify-center">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3772.2458643646196!2d73.01384577502566!3d19.008884682181936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c360d9572cc7%3A0x88c5b6edd21c2b2!2sArya%20Samaj%20Nerul!5e0!3m2!1sen!2sin!4v1739626400718!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3772.230088108584!2d73.0141744249757!3d19.009580232181403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c360d9572cc7%3A0x88c5b6edd21c2b2!2sArya%20Samaj%20Nerul!5e0!3m2!1sen!2sin!4v1755497993098!5m2!1sen!2sin"
             width="100%"
             height="250"
             className="rounded-lg shadow-md"
@@ -145,7 +145,7 @@ export default function Footer() {
           />
         </div>
         <a
-          href="https://www.google.com/maps/place/Arya+Samaj+Nerul/@19.008884,73.013846,15z"
+          href="https://www.google.com/maps/dir/?api=1&destination=Arya+Samaj+Nerul+Seawoods,19.0095802,73.0141744"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-3 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md"
