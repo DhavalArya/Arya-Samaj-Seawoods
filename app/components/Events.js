@@ -19,8 +19,6 @@ export default function Events() {
   const [countdown, setCountdown] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  const siteUrl = "https://aryasamajseawoods.co.in";
-
   useEffect(() => {
     const controller = new AbortController();
     fetch("/events.json", { signal: controller.signal })
