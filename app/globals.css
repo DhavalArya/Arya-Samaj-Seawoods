@@ -400,14 +400,6 @@ body {
   box-shadow: 0px 6px 20px rgba(255, 140, 0, 0.2);
 }
 
-.event-day {
-  background-color: #fde68a !important; /* amber-200 */
-  color: #92400e !important; /* amber-900 */
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
 html {
   scroll-behavior: smooth;
 }
@@ -433,4 +425,16 @@ html {
 }
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+.event-day {
+  background-color: #fde68a !important; /* amber-200 */
+  color: #92400e !important; /* amber-900 */
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 90%;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }

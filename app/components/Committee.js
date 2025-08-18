@@ -13,7 +13,7 @@ const committeeMembers = [
   { name: "Shri Mahendra Arya", position: "Vice President", image: "/images/Mahendra.jpg" },
   { name: "Shri Swadesh Karmakar", position: "Secretary", image: "/images/Swadesh.jpg" },
   { name: "Shri Dhaval Arya", position: "Secretary", image: "/images/Dhaval.jpg" },
-  { name: "Shri Chandrabali Singh", position: "Treasurer", image: "/images/member6.jpg" },
+  { name: "Shri Chandrabali Singh", position: "Treasurer", image: "/images/Chandrabali.jpg" },
   { name: "Shri Vijay Gupta", position: "Treasurer", image: "/images/member7.jpg" },
 ];
 

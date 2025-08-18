@@ -13,6 +13,8 @@ export default function Events() {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [pastEvents, setPastEvents] = useState([]);
   const [nextEvent, setNextEvent] = useState(null);
   const [countdown, setCountdown] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
@@ -23,11 +25,25 @@ export default function Events() {
     fetch("/events.json", { signal: controller.signal })
       .then((res) => res.json())
       .then((data) => {
-        setEvents(data);
+        const sorted = data.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        setEvents(sorted);
         setLastUpdated(new Date());
+
+        const now = new Date();
+        const upcoming = sorted
+          .filter((event) => new Date(event.date) >= now)
+          .slice(0, 3);
+        const past = sorted.filter((event) => new Date(event.date) < now);
+
+        setUpcomingEvents(upcoming);
+        setPastEvents(past);
+        setNextEvent(upcoming.length > 0 ? upcoming[0] : null);
       })
       .catch((err) => {
         if (err.name !== "AbortError") {
+          console.error("Error fetching events:", err);
         }
       });
 
@@ -41,17 +57,6 @@ export default function Events() {
       eventsObj[event.date] = event.title;
     });
     return eventsObj;
-  }, [events]);
-
-  // Find nearest upcoming event
-  useEffect(() => {
-    const futureEvents = events
-      .filter((event) => new Date(event.date) >= new Date())
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    if (futureEvents.length > 0) {
-      setNextEvent(futureEvents[0]);
-    }
   }, [events]);
 
   // Countdown logic
@@ -97,12 +102,16 @@ export default function Events() {
       </h2>
 
       {/* Countdown */}
-      {nextEvent && (
+      {nextEvent ? (
         <p
           className="text-lg font-medium text-[#D9534F] bg-white px-4 py-2 rounded-full inline-block shadow-md mb-6"
           aria-live="polite"
         >
           🎉 Next Event: {nextEvent.title} <br /> {countdown}
+        </p>
+      ) : (
+        <p className="text-lg font-medium text-gray-700 bg-white px-4 py-2 rounded-full inline-block shadow mb-6">
+          🙁 No upcoming events found.
         </p>
       )}
 
@@ -117,10 +126,11 @@ export default function Events() {
           }}
           tileContent={({ date }) => {
             const formattedDate = format(date, "yyyy-MM-dd");
-            return eventDates[formattedDate] ? (
+            const matchedEvent = events.find((e) => e.date === formattedDate);
+            return matchedEvent ? (
               <div
                 data-tooltip-id="event-tooltip"
-                data-tooltip-content={eventDates[formattedDate]}
+                data-tooltip-content={matchedEvent.description}
                 className="w-full h-full"
                 role="tooltip"
               ></div>
@@ -130,43 +140,76 @@ export default function Events() {
           aria-label="Events calendar showing highlighted event dates"
         />
 
-        {/* Event List */}
+        {/* Upcoming Events List */}
         <div className="mt-6 w-full">
           <h3 className="text-2xl font-semibold text-orange-700 mb-3">
-            🗓️ Event List
+            🗓️ Upcoming Events
           </h3>
           {lastUpdated && (
             <p className="text-sm text-gray-600 mb-2">
               Updated as of {format(lastUpdated, "MMM dd, yyyy")}
             </p>
           )}
-          <ul className="text-left space-y-3">
-            {events.map((event, index) => (
-              <li
-                key={index}
-                className="py-3 px-4 bg-orange-100 text-gray-900 rounded-lg shadow-sm flex justify-between items-center hover:bg-orange-200 transition-all"
-              >
-                <span className="font-semibold">{event.title}</span>
-                <time
-                  className="text-orange-700"
-                  dateTime={event.date}
-                  aria-label={`Event date: ${format(
-                    new Date(event.date),
-                    "MMMM dd, yyyy"
-                  )}`}
+          {upcomingEvents.length === 0 ? (
+            <p className="text-gray-700">No upcoming events available.</p>
+          ) : (
+            <ul className="text-left space-y-3">
+              {upcomingEvents.map((event, index) => (
+                <li
+                  key={index}
+                  className="py-4 px-5 bg-orange-100 text-gray-900 rounded-lg shadow-sm hover:bg-orange-200 transition-all"
                 >
-                  {format(new Date(event.date), "MMM dd, yyyy")}
-                </time>
-              </li>
-            ))}
-          </ul>
+                  <h4 className="font-semibold text-lg">{event.title}</h4>
+                  <p className="text-sm text-gray-700 mb-1">
+                    {event.description}
+                  </p>
+                  <div className="flex justify-between items-center text-sm text-orange-700">
+                    <time dateTime={event.date}>
+                      📅 {format(new Date(event.date), "MMM dd, yyyy")}
+                    </time>
+                    <span>🕒 {event.time}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
+
+        {/* Past Events */}
+        {/* <div className="mt-10 w-full">
+          <h3 className="text-2xl font-semibold text-orange-700 mb-3">
+            📜 Past Events
+          </h3>
+          {pastEvents.length === 0 ? (
+            <p className="text-gray-700">No past events available.</p>
+          ) : (
+            <ul className="text-left space-y-3">
+              {pastEvents.map((event, index) => (
+                <li
+                  key={index}
+                  className="py-4 px-5 bg-gray-100 text-gray-800 rounded-lg shadow-sm hover:bg-gray-200 transition-all"
+                >
+                  <h4 className="font-semibold text-lg">{event.title}</h4>
+                  <p className="text-sm text-gray-600 mb-1">
+                    {event.description}
+                  </p>
+                  <div className="flex justify-between items-center text-sm text-gray-700">
+                    <time dateTime={event.date}>
+                      📅 {format(new Date(event.date), "MMM dd, yyyy")}
+                    </time>
+                    <span>🕒 {event.time}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div> */}
       </div>
 
       {/* Tooltip */}
       <Tooltip id="event-tooltip" />
 
-      {/* Schema.org Event Markup */}
+      {/* Structured Data */}
       {events.length > 0 && (
         <script type="application/ld+json">
           {JSON.stringify(
@@ -174,7 +217,15 @@ export default function Events() {
               "@context": "https://schema.org",
               "@type": "Event",
               name: event.title,
-              startDate: event.date,
+              description: event.description,
+              startDate: `${event.date}T${event.time.split(" - ")[0].replace(
+                / /g,
+                ""
+              )}`,
+              endDate: `${event.date}T${event.time.split(" - ")[1].replace(
+                / /g,
+                ""
+              )}`,
               eventAttendanceMode:
                 "https://schema.org/OfflineEventAttendanceMode",
               eventStatus: "https://schema.org/EventScheduled",

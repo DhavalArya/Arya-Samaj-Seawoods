@@ -19,20 +19,26 @@ export default function Header() {
       const res = await fetch(url);
       const data = await res.json();
       setter(data);
-    } catch {
+    } catch (err) {
+      console.error("Failed to fetch:", err);
     }
   }, []);
 
-  // Load events & auto-rotate them
+  // Load events & rotate them
   useEffect(() => {
-    fetchData("/events.json", setEvents);
+    fetchData("/events.json", (data) => {
+      const upcoming = data
+        .filter((event) => new Date(event.date) >= new Date())
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+      setEvents(upcoming);
+    });
   }, [fetchData]);
 
   useEffect(() => {
     if (!events.length) return;
     const interval = setInterval(
       () => setCurrentEvent((prev) => (prev + 1) % events.length),
-      5000
+      7000
     );
     return () => clearInterval(interval);
   }, [events]);
@@ -54,6 +60,11 @@ export default function Header() {
     if (!text) return `${MIN_SHLOKA_DURATION}s`;
     const duration = text.length / CHAR_PER_SECOND;
     return `${Math.max(MIN_SHLOKA_DURATION, duration)}s`;
+  };
+
+  const formatDate = (dateStr) => {
+    const options = { month: "short", day: "numeric", year: "numeric" };
+    return new Date(dateStr).toLocaleDateString(undefined, options);
   };
 
   return (
@@ -172,18 +183,20 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Live Upcoming Event Ticker */}
-      <div className="bg-yellow-500 text-black text-sm py-2 text-center font-medium">
-        {events.length > 0 && (
-          <>
-            <span className="animate-pulse">🔥 Upcoming Event:</span>{" "}
-            {events[currentEvent].title} -{" "}
-            {new Date(events[currentEvent].date).toDateString()}
-          </>
+      {/* Event Ticker */}
+      <div className="bg-yellow-500 text-black text-sm py-2 text-center font-medium px-4 overflow-hidden">
+        {events.length > 0 ? (
+          <div className="truncate">
+            🔥 Upcoming Event:{" "}
+            <span className="font-semibold">{events[currentEvent].title}</span> —{" "}
+            {formatDate(events[currentEvent].date)}, {events[currentEvent].time}
+          </div>
+        ) : (
+          <div className="italic">📭 No upcoming events at the moment</div>
         )}
       </div>
 
-      {/* Tailwind CSS custom animation */}
+      {/* Tailwind CSS Custom Animation */}
       <style jsx global>{`
         @keyframes marquee {
           0% {
@@ -195,7 +208,8 @@ export default function Header() {
         }
         .animate-marquee {
           position: absolute;
-          animation: marquee var(--marquee-duration) linear;
+          animation: marquee var(--marquee-duration) linear infinite;
+          white-space: nowrap;
         }
         .animate-marquee:hover {
           animation-play-state: paused;

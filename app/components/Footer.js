@@ -88,7 +88,7 @@ export default function Footer() {
         {/* 📍 Contact Info */}
         <div>
           <h2 className="text-xl font-bold font-merriweather mb-3">📍 Contact Us</h2>
-          <p className="text-sm">Seawoods, Navi Mumbai</p>
+          <p className="text-sm">Juhi Avenue, Surya Society, Sector 50, Seawoods, Navi Mumbai, Maharashtra (Pin Code: 400706)</p>
           <p className="text-sm">📞 +91 9223344556, +91 9323022055</p>
           <p className="text-sm">✉️ aryasamajseawoods@gmail.com</p>
         </div>
