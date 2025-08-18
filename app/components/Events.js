@@ -14,7 +14,7 @@ export default function Events() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [pastEvents, setPastEvents] = useState([]);
+  // const [pastEvents, setPastEvents] = useState([]);
   const [nextEvent, setNextEvent] = useState(null);
   const [countdown, setCountdown] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
