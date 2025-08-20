@@ -1,4 +1,4 @@
-// import { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { initializeApp, cert, getApps, ServiceAccount } from "firebase-admin/app";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
 import nodemailer from "nodemailer";
@@ -142,13 +142,13 @@ async function sendEmail({
 }
 
 // ---- Handler ----
-export async function GET() {
+export async function GET(req: NextRequest) {
   // For testing locally, let this run without cron header.
   // For prod, uncomment below guard:
-  // const isCron = req.headers.get("x-vercel-cron") === "true";
-  // if (process.env.NODE_ENV === "production" && !isCron) {
-  //   return new Response("Forbidden", { status: 403 });
-  // }
+  const isCron = req.headers.get("x-vercel-cron") === "true";
+  if (process.env.NODE_ENV === "production" && !isCron) {
+    return new Response("Forbidden", { status: 403 });
+  }
 
   const { Y, M, D, start, end } = istTodayRange();
   const startTs = Timestamp.fromDate(start);
