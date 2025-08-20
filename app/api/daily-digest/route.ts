@@ -25,20 +25,21 @@ const {
   DIGEST_TO_EMAIL,
 } = process.env;
 
+function getServiceAccountFromB64(): ServiceAccount {
+  const b64 = process.env.FB_SERVICE_ACCOUNT_B64;
+  if (!b64) throw new Error("FB_SERVICE_ACCOUNT_B64 missing");
+  const json = Buffer.from(b64, "base64").toString("utf8");
+  const obj = JSON.parse(json);
+  if (!obj.private_key || !obj.client_email) {
+    throw new Error("Service account JSON malformed");
+  }
+  return obj as ServiceAccount;
+}
+
 // ---- Firebase Admin init ----
 if (!getApps().length) {
-  const key =
-    (FB_PRIVATE_KEY || "").includes("\\n")
-      ? FB_PRIVATE_KEY!.replace(/\\n/g, "\n")
-      : FB_PRIVATE_KEY || "";
-
-  initializeApp({
-    credential: cert({
-      projectId: FB_PROJECT_ID!,
-      clientEmail: FB_CLIENT_EMAIL!,
-      privateKey: key,
-    } as ServiceAccount),
-  });
+    const sa = getServiceAccountFromB64();
+    initializeApp({ credential: cert(sa) });
 }
 const db = getFirestore();
 
