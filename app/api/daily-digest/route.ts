@@ -141,7 +141,7 @@ async function sendEmail({
 }
 
 // ---- Handler ----
-export async function GET(req: NextRequest) {
+export async function GET() {
   // For testing locally, let this run without cron header.
   // For prod, uncomment below guard:
   // const isCron = req.headers.get("x-vercel-cron") === "true";
