@@ -64,7 +64,7 @@ export default function Contact() {
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
             name: "Arya Samaj Seawoods",
-            image: "https://aryasamajseawoods.co.in/images/aryasamaj-logo.jpg",
+            image: "https://www.aryasamajseawoods.co.in/images/aryasamaj-logo.jpg",
             address: {
               "@type": "PostalAddress",
               streetAddress: "Seawoods",
@@ -75,7 +75,7 @@ export default function Contact() {
             },
             telephone: "+91-9223344556, +91-9323022055",
             email: "aryasamajseawoods@gmail.com",
-            url: "https://aryasamajseawoods.co.in",
+            url: "https://www.aryasamajseawoods.co.in",
           }),
         }}
       />

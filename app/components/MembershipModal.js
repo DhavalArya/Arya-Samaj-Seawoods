@@ -56,8 +56,8 @@ export default function MembershipModal({ showForm, setShowForm }) {
         purpose,
         paymentRef,
         message,
-        verified: false,
-        status: "pending",
+        paymentVerified: false,
+        membershipStatus: "pending",
         submittedAt: serverTimestamp(),
       });
 
@@ -179,7 +179,7 @@ export default function MembershipModal({ showForm, setShowForm }) {
               {successMsg && (
                 <p
                   className="mb-3 text-center text-green-600 font-medium"
-                  role="status"
+                  role="membershipStatus"
                 >
                   {successMsg}
                 </p>

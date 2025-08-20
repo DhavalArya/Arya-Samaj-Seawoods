@@ -409,7 +409,7 @@ export default function VaidikQuiz() {
 
   // Handle share button
   const handleShare = useCallback(() => {
-    const shareUrl = "https://aryasamajseawoods.co.in/#VaidikQuiz"; // Replace as needed
+    const shareUrl = "https://www.aryasamajseawoods.co.in/#VaidikQuiz"; // Replace as needed
     navigator.clipboard.writeText(shareUrl).then(() => {
       alert("Quiz link copied! Share with friends.");
     });

@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Arya Samaj Seawoods",
-  description: "Official website of Arya Samaj Seawoods – Promoting Vaidik wisdom, social reform, education, and spiritual awakening.",
+  description: "Official website of Arya Samaj Seawoods – Promoting Vaidik wisdom, social reform, education, and spiritual awakening through Vedic weddings, havans, sanskars and community activities.",
   keywords: [
     "Arya Samaj",
     "Arya Samaj Seawoods",
@@ -41,22 +41,22 @@ export const metadata = {
     "Yajna",
     "Gurukul"
   ],
-  metadataBase: new URL("https://aryasamajseawoods.co.in"),
+  metadataBase: new URL("https://www.aryasamajseawoods.co.in"),
   openGraph: {
     title: "Arya Samaj Seawoods",
     description: "Explore the official site of Arya Samaj Seawoods — rooted in truth, service, and Vaidik heritage.",
-    url: "https://aryasamajseawoods.co.in",
+    url: "https://www.aryasamajseawoods.co.in",
     siteName: "Arya Samaj Seawoods",
     locale: "en_IN",
     type: "website",
   },
   alternates: {
-    canonical: "https://aryasamajseawoods.co.in",
+    canonical: 'https://www.aryasamajseawoods.co.in'
   },
   authors: [
     {
       name: "Arya Samaj Seawoods",
-      url: "https://aryasamajseawoods.co.in",
+      url: "https://www.aryasamajseawoods.co.in",
       email: "aryasamajseawoods@gmail.com",
     },
   ],

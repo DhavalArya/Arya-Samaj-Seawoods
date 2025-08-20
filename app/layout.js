@@ -2,10 +2,10 @@ export const metadata = {
   title: "Arya Samaj Seawoods",
   description: "Official website of Arya Samaj Seawoods – Promoting Vaidik wisdom, social reform, education, and spiritual awakening.",
   alternates: {
-    canonical: "https://aryasamajseawoods.co.in",
+    canonical: "https://www.aryasamajseawoods.co.in",
     languages: {
-      "en": "https://aryasamajseawoods.co.in/en",
-      "hi": "https://aryasamajseawoods.co.in/hi",
+      "en": "https://www.aryasamajseawoods.co.in/en",
+      "hi": "https://www.aryasamajseawoods.co.in/hi",
     },
   },
 };

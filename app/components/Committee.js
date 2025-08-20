@@ -88,7 +88,7 @@ export default function Committee() {
                 "@type": "Person",
                 name: m.name,
                 jobTitle: m.position,
-                image: `https://aryasamajseawoods.co.in${m.image}`,
+                image: `https://www.aryasamajseawoods.co.in${m.image}`,
               })),
             }),
           }}

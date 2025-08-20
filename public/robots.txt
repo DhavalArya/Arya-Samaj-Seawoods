@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://aryasamajseawoods.co.in
+Host: https://www.aryasamajseawoods.co.in
 
 # Sitemaps
-Sitemap: https://aryasamajseawoods.co.in/sitemap.xml
+Sitemap: https://www.aryasamajseawoods.co.in/sitemap.xml

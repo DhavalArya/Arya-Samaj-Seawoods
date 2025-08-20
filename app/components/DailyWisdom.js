@@ -10,7 +10,7 @@ import {
   FaChevronRight,
 } from "react-icons/fa6";
 
-const siteUrl = "https://aryasamajseawoods.co.in";
+const siteUrl = "https://www.aryasamajseawoods.co.in";
 
 const quotes = [
   { 

@@ -102,8 +102,8 @@ export default function Hero({ setShowForm }) {
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "Arya Samaj Seawoods",
-              url: "https://aryasamajseawoods.co.in",
-              logo: "https://aryasamajseawoods.co.in/images/arya-samaj-logo.jpg",
+              url: "https://www.aryasamajseawoods.co.in",
+              logo: "https://www.aryasamajseawoods.co.in/images/arya-samaj-logo.jpg",
               sameAs: [
                 "https://www.facebook.com/aryasamajseawoods",
                 "https://twitter.com/yourhandle",

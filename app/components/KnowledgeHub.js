@@ -34,7 +34,7 @@ export default function KnowledgeHub() {
                 name: "Arya Samaj Seawoods",
                 logo: {
                   "@type": "ImageObject",
-                  url: "https://aryasamajseawoods.co.in/images/arya-samaj-logo.jpg",
+                  url: "https://www.aryasamajseawoods.co.in/images/arya-samaj-logo.jpg",
                 },
               },
             }),
