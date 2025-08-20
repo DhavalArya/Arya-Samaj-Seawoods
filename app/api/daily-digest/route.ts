@@ -17,9 +17,9 @@ interface Membership {
 
 // ---- ENV ----
 const {
-  FB_PROJECT_ID,
-  FB_CLIENT_EMAIL,
-  FB_PRIVATE_KEY,
+//   FB_PROJECT_ID,
+//   FB_CLIENT_EMAIL,
+//   FB_PRIVATE_KEY,
   GMAIL_USER,
   GMAIL_APP_PASSWORD,
   DIGEST_TO_EMAIL,
