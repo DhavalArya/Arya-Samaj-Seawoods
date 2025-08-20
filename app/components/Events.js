@@ -5,7 +5,8 @@ import Calendar from "react-calendar";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import "react-calendar/dist/Calendar.css";
-import { format, differenceInMilliseconds } from "date-fns";
+import { format, differenceInMilliseconds, parse } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
 export default function Events() {
   const ref = useRef(null);
@@ -61,10 +62,28 @@ export default function Events() {
     if (!nextEvent) return;
 
     const updateCountdown = () => {
-      const timeLeft = differenceInMilliseconds(
-        new Date(nextEvent.date),
-        new Date()
-      );
+      const timeZone = 'Asia/Kolkata';
+
+      // Combine date and start time as a string (e.g., "2025-10-12 9:00 PM")
+      const startTimeStr = nextEvent.time.split(" - ")[0]; // "9:00 PM"
+      const combinedDateTimeStr = `${nextEvent.date} ${startTimeStr}`;
+
+      // Define the format string to match the combined format
+      const formatString = "yyyy-MM-dd h:mm a";
+
+      // Parse to a Date object (assumes local time, but we'll convert to zoned)
+      const parsedEventDate = parse(combinedDateTimeStr, formatString, new Date());
+
+      // Convert to IST "wall time" (Asia/Kolkata)
+      const eventInIST = toZonedTime(parsedEventDate, timeZone);
+
+      // Get current time and convert to IST
+      const now = new Date();
+      const nowInIST = toZonedTime(now, timeZone);
+
+      // Calculate time difference
+      const timeLeft = differenceInMilliseconds(eventInIST, nowInIST);
+
       if (timeLeft <= 0) {
         setCountdown("⏳ Event is today!");
       } else {
