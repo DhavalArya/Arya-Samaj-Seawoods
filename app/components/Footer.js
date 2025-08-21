@@ -145,7 +145,7 @@ export default function Footer() {
           />
         </div>
         <a
-          href="https://www.google.com/maps/dir/?api=1&destination=Arya+Samaj+Nerul+Seawoods,19.0095802,73.0141744"
+          href="https://www.google.com/maps/dir/?api=1&origin=Current+Location&destination=19.00889357134613,73.01644148603549"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-3 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md"
