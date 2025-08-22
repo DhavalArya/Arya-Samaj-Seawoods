@@ -145,9 +145,11 @@ async function sendEmail({
 export async function GET(req: NextRequest) {
   // For testing locally, let this run without cron header.
   // For prod, uncomment below guard:
-  const isCron = req.headers.get("x-vercel-cron") === "true";
-  if (process.env.NODE_ENV === "production" && !isCron) {
-    return new Response("Forbidden", { status: 403 });
+  if (process.env.NODE_ENV === "production") {
+    const auth = req.headers.get("authorization");
+    if (!auth || auth !== `Bearer ${process.env.CRON_SECRET}`) {
+      return new Response("Unauthorized", { status: 401 });
+    }
   }
 
   const { Y, M, D, start, end } = istTodayRange();
