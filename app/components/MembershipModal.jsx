@@ -1,6 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import Image from "next/image";
@@ -10,15 +10,109 @@ import "react-datepicker/dist/react-datepicker.css";
 import jsPDF from "jspdf";
 import QRCode from "qrcode";
 
-// tiny tooltip used only where meaning may be unclear
-const Info = ({ title }) => (
-  <span
-    title={title}
-    className="ml-1 inline-flex items-center justify-center text-xs text-gray-500 cursor-help select-none"
-  >
-    ⓘ
-  </span>
-);
+/**
+ * Info hint:
+ * - Desktop/laptop: shows native title tooltip on hover.
+ * - Mobile/tablet: tap ⓘ to open a small popover with the same text.
+ */
+const Info = ({ title }) => {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef(null);
+  const popRef = useRef(null);
+  const [style, setStyle] = useState({}); // { left, top, width }
+
+  const isTouch = useMemo(
+    () =>
+      typeof window !== "undefined" &&
+      (("ontouchstart" in window) || (navigator.maxTouchPoints || 0) > 0),
+    []
+  );
+
+  // Desktop/laptop → native tooltip
+  if (!isTouch) {
+    return (
+      <span
+        title={title}
+        className="ml-1 inline-flex items-center justify-center text-xs text-gray-500 cursor-help select-none"
+      >
+        ⓘ
+      </span>
+    );
+  }
+
+  // Position the popover so it never overflows the viewport
+  useEffect(() => {
+    if (!open) return;
+
+    const place = () => {
+      if (!triggerRef.current) return;
+      const rect = triggerRef.current.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      const width = Math.min(260, vw - 16); // keep 8px margins
+      let left = rect.left + rect.width / 2 - width / 2;
+      left = Math.max(8, Math.min(left, vw - width - 8));
+
+      // default below the icon
+      let top = rect.bottom + 8;
+
+      // if would go off bottom, flip above
+      const h = popRef.current ? popRef.current.offsetHeight : 80;
+      if (top + h > vh - 8) top = rect.top - h - 8;
+
+      setStyle({ left, top, width });
+    };
+
+    // place now and on changes
+    place();
+    const onDocClick = (e) => {
+      if (
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target) &&
+        popRef.current &&
+        !popRef.current.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    document.addEventListener("click", onDocClick);
+    // re-measure after render to get real height
+    requestAnimationFrame(place);
+
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+      document.removeEventListener("click", onDocClick);
+    };
+  }, [open]);
+
+  return (
+    <span ref={triggerRef} className="relative inline-block ml-1 align-middle">
+      <button
+        type="button"
+        aria-label="More info"
+        onClick={() => setOpen((o) => !o)}
+        className="inline-flex items-center justify-center text-xs text-gray-600 border border-gray-300 rounded-full w-4 h-4 leading-none"
+      >
+        i
+      </button>
+
+      {open && (
+        <div
+          ref={popRef}
+          style={{ position: "fixed", ...style }}
+          className="z-[9999] p-2 text-xs bg-black text-white rounded shadow-lg"
+        >
+          {title}
+        </div>
+      )}
+    </span>
+  );
+};
 
 export default function MembershipModal({ showForm, setShowForm }) {
   // Steps: 1 Basic, 2 KYC+Family, 3 Community, 4 Payment, 5 Review
@@ -81,14 +175,15 @@ export default function MembershipModal({ showForm, setShowForm }) {
 
   // Options
   const relationOptions = [
-    "Father","Mother","Spouse","Son","Daughter","Brother","Sister",
-    "Grandfather","Grandmother","Grandson","Granddaughter","Uncle","Aunt","Cousin","Other"
+    "Father", "Mother", "Spouse", "Son", "Daughter", "Brother", "Sister",
+    "Grandfather", "Grandmother", "Grandson", "Granddaughter", "Uncle", "Aunt", "Cousin", "Other",
   ];
   const bloodGroups = ["A+","A-","B+","B-","AB+","AB-","O+","O-"];
   const serviceOptions = ["Teaching","Seva","Event Management","Music","Logistics","Fundraising","Social Media","Youth Wing","Tech Support"];
   const spiritualOptions = ["Satsang","Yoga","Vedic Learning","Social Service","Bhajans/Kirtan","Books/Research"];
   const heardOptions = ["Reference","Family","Online","Walk-in","Event"];
-  const toggleFromArray = (arr, val) => (arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
+  const toggleFromArray = (arr, val) =>
+    arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val];
 
   // Validation
   const validateId = (type, value) => {
@@ -150,8 +245,10 @@ export default function MembershipModal({ showForm, setShowForm }) {
   const handlePrevStep = () => { setErrorMsg(""); setStep((s) => Math.max(1, s - 1)); };
 
   // Family helpers
-  const addFamilyRow = () => setFamily((rows) => [...rows, { name: "", relation: "", gender: "", dob: null, anniversary: null }]);
-  const removeFamilyRow = (idx) => setFamily((rows) => rows.filter((_, i) => i !== idx));
+  const addFamilyRow = () =>
+    setFamily((rows) => [...rows, { name: "", relation: "", gender: "", dob: null, anniversary: null }]);
+  const removeFamilyRow = (idx) =>
+    setFamily((rows) => rows.filter((_, i) => i !== idx));
 
   // Submit
   const handleSubmit = async (e) => {
@@ -227,21 +324,30 @@ export default function MembershipModal({ showForm, setShowForm }) {
     doc.setFillColor(255, 127, 80); doc.roundedRect(2, 2, 82, 12, 2, 2, "F");
     doc.setFillColor(234, 88, 12);  doc.roundedRect(2, 8, 82, 6, 2, 2, "F");
     doc.setTextColor(255,255,255);  doc.setFontSize(8.8);
-    doc.text("Arya Samaj Seawoods", 43, 9, { align: "center" });
+    doc.text("Arya Samaj Seawoods Membership Card", 43, 9, { align: "center" });
 
     // logo (place public/images/vaidik-aum.png)
     try {
       const logoUrl = "/images/vaidik-aum.png";
       const dataUrl = await fetch(logoUrl)
-        .then(r=>r.blob())
-        .then(b=>new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(b); }));
+        .then((r) => r.blob())
+        .then(
+          (b) =>
+            new Promise((res) => {
+              const fr = new FileReader();
+              fr.onload = () => res(fr.result);
+              fr.readAsDataURL(b);
+            })
+        );
       doc.addImage(dataUrl, "PNG", 4, 3, 8, 8, undefined, "FAST");
-    } catch {/* fail silently if logo missing */}
+    } catch {
+      /* ignore if logo missing */
+    }
 
     // details
     doc.setTextColor(0,0,0); doc.setFontSize(7.5);
     const lineX = 6;
-    doc.text(`Name: ${name || "-"}`.slice(0,40), lineX, 20);
+    doc.text(`Name: ${name || "-"}`.slice(0, 40), lineX, 20);
     doc.text(`ID: ${membershipId || "pending"}`, lineX, 25);
     doc.text(`Mobile: ${mobile || "-"}`, lineX, 30);
     doc.text(`Valid till: ${validTillStr}`, lineX, 35);
@@ -261,7 +367,9 @@ export default function MembershipModal({ showForm, setShowForm }) {
       validTill: `${yyyy}-${mm}-${dd}`,
     };
     const qr = await QRCode.toDataURL(JSON.stringify(payload));
-    doc.addImage(qr, "JPG", 62, 39.5, 20, 11);
+
+    // IMPORTANT: use "PNG" here (using "JPG" can create a blank PDF)
+    doc.addImage(qr, "PNG", 62, 39.5, 20, 11);
 
     doc.save(`${membershipId || "membership"}_Card.pdf`);
   };
@@ -274,7 +382,7 @@ export default function MembershipModal({ showForm, setShowForm }) {
 
           <motion.div
             className="fixed inset-0 bg-black/60 flex items-center justify-center z-[2000] overflow-auto p-4"
-            initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setShowForm(false)}
           >
             <motion.div
@@ -294,7 +402,9 @@ export default function MembershipModal({ showForm, setShowForm }) {
                   Membership is valid for one year from the date you submit this form.
                 </p>
                 <div className="mt-3 flex items-center justify-center gap-1 text-sm">
-                  {[1,2,3,4,5].map(n=> (<div key={n} className={`h-2 w-14 rounded-full ${step>=n? 'bg-orange-500':'bg-gray-200'}`} />))}
+                  {[1,2,3,4,5].map((n) => (
+                    <div key={n} className={`h-2 w-14 rounded-full ${step >= n ? "bg-orange-500" : "bg-gray-200"}`} />
+                  ))}
                 </div>
               </div>
 
@@ -315,7 +425,11 @@ export default function MembershipModal({ showForm, setShowForm }) {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {errorMsg && <p className="text-red-600 bg-red-50 border border-red-200 p-2 rounded">{errorMsg}</p>}
+                  {errorMsg && (
+                    <p className="text-red-600 bg-red-50 border border-red-200 p-2 rounded">
+                      {errorMsg}
+                    </p>
+                  )}
 
                   {/* Step 1 */}
                   {step === 1 && (
@@ -343,16 +457,16 @@ export default function MembershipModal({ showForm, setShowForm }) {
                         </div>
                         <div className="flex flex-col">
                           <label className="text-sm text-gray-600">Mobile *</label>
-                          <input className="w-full border px-3 py-2 rounded" value={mobile} onChange={(e) => setMobile(e.target.value.replace(/[^0-9]/g, ''))} />
+                          <input className="w-full border px-3 py-2 rounded" value={mobile} onChange={(e) => setMobile(e.target.value.replace(/[^0-9]/g, ""))} />
                         </div>
                         <div className="md:col-span-2">
                           <label className="text-sm text-gray-600">
                             Gender *<Info title="Used only for planning (accommodation/events)." />
                           </label>
                           <div className="flex flex-wrap gap-4 border px-3 py-2 rounded mt-1">
-                            {['Male','Female','Other'].map((g) => (
+                            {["Male","Female","Other"].map((g) => (
                               <label key={g} className="flex items-center gap-2 text-sm">
-                                <input type="radio" name="gender" value={g} checked={gender===g} onChange={(e)=>setGender(e.target.value)} /> {g}
+                                <input type="radio" name="gender" value={g} checked={gender === g} onChange={(e) => setGender(e.target.value)} /> {g}
                               </label>
                             ))}
                           </div>
@@ -384,7 +498,9 @@ export default function MembershipModal({ showForm, setShowForm }) {
                       </div>
                       <div className="flex justify-between">
                         <div />
-                        <button type="button" onClick={handleNextStep} className="bg-orange-600 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-700">Next →</button>
+                        <button type="button" onClick={handleNextStep} className="bg-orange-600 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-700">
+                          Next →
+                        </button>
                       </div>
                     </div>
                   )}
@@ -490,7 +606,7 @@ export default function MembershipModal({ showForm, setShowForm }) {
                   {/* Step 3 */}
                   {step === 3 && (
                     <div className="space-y-3">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 md-grid-cols-2 md:grid-cols-2 gap-3">
                         <div className="flex flex-col">
                           <label className="text-sm text-gray-600">Languages Known</label>
                           <input className="w-full border px-3 py-2 rounded" value={languagesKnown} onChange={(e)=>setLanguagesKnown(e.target.value)} placeholder="e.g., Hindi, English, Gujarati" />
@@ -513,7 +629,7 @@ export default function MembershipModal({ showForm, setShowForm }) {
                         </div>
                         <div className="flex flex-col">
                           <label className="text-sm text-gray-600">Emergency Contact Number</label>
-                          <input className="w-full border px-3 py-2 rounded" value={emergencyPhone} onChange={(e)=>setEmergencyPhone(e.target.value.replace(/[^0-9]/g, ''))} />
+                          <input className="w-full border px-3 py-2 rounded" value={emergencyPhone} onChange={(e)=>setEmergencyPhone(e.target.value.replace(/[^0-9]/g, ""))} />
                         </div>
                         <div className="flex flex-col">
                           <label className="text-sm text-gray-600">How did you hear about us?</label>
@@ -609,7 +725,10 @@ export default function MembershipModal({ showForm, setShowForm }) {
                   {step === 5 && (
                     <div className="space-y-4">
                       <div className="p-3 rounded-lg bg-gray-50 border text-sm">
-                        <p><span className="font-semibold">Please review your details</span> before submitting. Your membership will be <span className="font-semibold">valid for one year from today</span> (subject to payment verification).</p>
+                        <p>
+                          <span className="font-semibold">Please review your details</span> before submitting.
+                          Your membership will be <span className="font-semibold">valid for one year from today</span> (subject to payment verification).
+                        </p>
                       </div>
                       <div className="flex justify-between">
                         <button type="button" onClick={handlePrevStep} className="bg-gray-400 text-white px-4 py-2 rounded-lg">← Back</button>
