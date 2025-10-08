@@ -157,7 +157,13 @@ export default function Home() {
           </DeferInView>
           <DeferInView>
             <Suspense fallback={<div className="loader" aria-live="polite">Loading…</div>}>
-              <Slideshow />
+              <Slideshow
+                onlyLargeScreens
+                transition="kenburns"
+                durationMs={6000}
+                crossfadeMs={1000}
+                shuffle
+              />
             </Suspense>
           </DeferInView>
           <DeferInView>
