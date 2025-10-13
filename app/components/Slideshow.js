@@ -55,13 +55,13 @@ function useAvifSupport() {
           if (alive) setOk(true);
           return;
         }
-      } catch (_) {}
+      } catch {}
       try {
         const img = new Image();
         img.onload = () => alive && setOk(true);
         img.onerror = () => alive && setOk(false);
         img.src = avifData;
-      } catch (_) {
+      } catch {
         alive = false;
         setOk(false);
       }
@@ -260,7 +260,6 @@ export default function Slideshow({
   });
 
   const variants = useMemo(() => makeVariants(crossfadeMs), [crossfadeMs]);
-  const variantKey = transition;
 
   const currIdx = order[current] ?? 0;
   const curr = slides[currIdx] || {};
